@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Incredibly Strange Films - Vintage CRT</title>
+<title>Incredibly Strange Films - Homepage</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
@@ -11,11 +11,11 @@
     margin: 0;
     padding: 0;
     height: 100%;
-    background: #000;
+    background: #fff; /* blanc */
     font-family: 'Share Tech Mono', monospace;
     overflow: hidden;
     cursor: pointer;
-    color: #39ff14;
+    color: #000; /* texte noir */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -23,7 +23,6 @@
     position: relative;
   }
 
-  /* Lignes de code sur toute la largeur */
   .lines {
     position: fixed;
     top: 0;
@@ -35,38 +34,33 @@
     white-space: pre;
     overflow: hidden;
     pointer-events: none;
-    color: #39ff14;
-    opacity: 0.08;
-    border-top: 2px solid #39ff14;
-    border-bottom: 2px solid #39ff14;
+    color: rgba(0,0,0,0.08); /* lignes gris clair */
+    border-top: 1px solid rgba(0,0,0,0.2);
+    border-bottom: 1px solid rgba(0,0,0,0.2);
     padding: 5px 0;
   }
 
-  /* Titre container */
   .title-container {
     position: relative;
     z-index: 1;
   }
 
   .modern {
-    font-size: 12vw;
+    font-size: 8vw;
     font-weight: bold;
-    color: #39ff14;
+    color: #000;
     display: block;
-    text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14;
   }
 
   .weird {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 10vw;
-    color: #39ff14;
+    font-size: 8vw;
+    color: #000;
     display: block;
     margin: -0.5em 0;
     opacity: 0;
-    text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14;
   }
 
-  /* Glitch animation */
   @keyframes glitch {
     0% { opacity: 1; transform: translate(0,0) skew(0deg); }
     10% { opacity: 0.8; transform: translate(-2px,1px) skew(-5deg); }
@@ -84,10 +78,8 @@
 </head>
 <body onclick="goToGenerator()">
 
-  <!-- Lignes de code en arrière-plan -->
   <div class="lines" id="lines"></div>
 
-  <!-- Titre principal -->
   <div class="title-container">
     <div class="modern" id="incredibly">INCREDIBLY</div>
     <div class="weird" id="strange">STRANGE</div>
@@ -99,14 +91,12 @@
       window.location.href = "reco.html";
     }
 
-    // Animation glitch pour STRANGE
     const strange = document.getElementById('strange');
     setTimeout(() => {
       strange.style.opacity = 1;
       strange.style.animation = "glitch 1s infinite";
-    }, 1200); // apparaît après 1,2s
+    }, 1200);
 
-    // Lignes de code aléatoires full-width
     const linesEl = document.getElementById('lines');
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789<>/{}[]()*&^%$#@!~';
     const lineCount = 60;
@@ -122,4 +112,3 @@
   </script>
 </body>
 </html>
-
