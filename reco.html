@@ -138,7 +138,7 @@
   </div>
 
   <script>
-    const GITHUB_PREFIX = "https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/"; // <-- Mets ton username et repo
+    const GITHUB_PREFIX = "https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/"; 
     let movies = [];
     let relaunchCount = 0;
 
@@ -177,12 +177,12 @@
       document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
       document.getElementById("desc").innerText = movie.description;
 
-      // Affiche (poster)
+      // Affiche (poster_file)
       if(movie.poster_file) {
-        document.getElementById("poster_file").src = GITHUB_PREFIX + movie.poster_file;
+        document.getElementById("poster").src = GITHUB_PREFIX + movie.poster_file;
       }
 
-      // Background full screen via fichier
+      // Background full screen (background_file)
       if(movie.background_file) {
         document.body.style.backgroundImage = `url(${GITHUB_PREFIX + movie.background_file})`;
       } else {
