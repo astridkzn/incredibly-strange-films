@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>🎬 Générateur de films</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 40px;
+    }
+    img {
+      border-radius: 12px;
+      margin: 20px 0;
+      max-width: 220px;
+    }
+    button {
+      background: #ff3b3b;
+      border: none;
+      color: white;
+      padding: 14px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .card {
+      max-width: 400px;
+      margin: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🎬 Film du moment</h1>
+  <button onclick="pickMovie()">Nouvelle reco</button>
+
+  <div class="card">
+    <h2 id="title"></h2>
+    <p id="meta"></p>
+    <img id="poster" />
+    <p id="desc"></p>
+  </div>
+
+  <script>
+    let movies = [];
+
+    fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/base")
+      .then(res => res.json())
+      .then(data => {
+        movies = data;
+        pickMovie();
+      });
+
+    function pickMovie() {
+      const movie = movies[Math.floor(Math.random() * movies.length)];
+      document.getElementById("title").innerText = movie.title;
+      document.getElementById("meta").innerText =
+        `${movie.director} · ${movie.year} · ${movie.genre}`;
+      document.getElementById("poster").src = movie.poster_url;
+      document.getElementById("desc").innerText = movie.description;
+    }
+  </script>
+</body>
+</html>
