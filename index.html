@@ -4,111 +4,107 @@
 <meta charset="UTF-8">
 <title>Incredibly Strange Films - Homepage</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-
-  body, html {
+  html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    background: #fff; /* blanc */
-    font-family: 'Share Tech Mono', monospace;
+    background-color: #000; /* fond noir */
+    font-family: 'Montserrat', sans-serif;
     overflow: hidden;
-    cursor: pointer;
-    color: #000; /* texte noir */
+  }
+
+  .homepage {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+  }
+
+  /* Vidéo gauche */
+  .video-container {
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .video-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Texte droite */
+  .text-container {
+    width: 50%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center;
-    position: relative;
+    color: #fff;
+    padding: 20px;
   }
 
-  .lines {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    font-size: 0.8em;
-    line-height: 1.2em;
-    white-space: pre;
-    overflow: hidden;
-    pointer-events: none;
-    color: rgba(0,0,0,0.08); /* lignes gris clair */
-    border-top: 1px solid rgba(0,0,0,0.2);
-    border-bottom: 1px solid rgba(0,0,0,0.2);
-    padding: 5px 0;
+  .title {
+    text-align: right;
+    line-height: 1.1;
   }
 
-  .title-container {
-    position: relative;
-    z-index: 1;
-  }
-
-  .modern {
-    font-size: 8vw;
+  .title .incredibly,
+  .title .films {
     font-weight: bold;
-    color: #000;
+    color: #fff;
+    font-size: 6vw;
     display: block;
   }
 
-  .weird {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 8vw;
-    color: #000;
+  .title .strange {
+    font-weight: normal;
+    color: red;
+    font-size: 6vw;
     display: block;
-    margin: -0.5em 0;
-    opacity: 0;
   }
 
-  @keyframes glitch {
-    0% { opacity: 1; transform: translate(0,0) skew(0deg); }
-    10% { opacity: 0.8; transform: translate(-2px,1px) skew(-5deg); }
-    20% { opacity: 1; transform: translate(2px,-1px) skew(5deg); }
-    30% { opacity: 0.9; transform: translate(-1px,2px) skew(-3deg); }
-    40% { opacity: 1; transform: translate(1px,-2px) skew(3deg); }
-    50% { opacity: 0.95; transform: translate(-2px,1px) skew(-5deg); }
-    60% { opacity: 1; transform: translate(2px,-1px) skew(5deg); }
-    70% { opacity: 0.9; transform: translate(0px,2px) skew(-2deg); }
-    80% { opacity: 1; transform: translate(1px,-1px) skew(2deg); }
-    90% { opacity: 0.95; transform: translate(-1px,1px) skew(-3deg); }
-    100% { opacity: 1; transform: translate(0,0) skew(0deg); }
+  @media (max-width: 900px) {
+    .homepage {
+      flex-direction: column;
+    }
+    .video-container, .text-container {
+      width: 100%;
+      height: 50%;
+    }
+    .title .incredibly, .title .strange, .title .films {
+      font-size: 10vw;
+    }
   }
 </style>
 </head>
 <body onclick="goToGenerator()">
 
-  <div class="lines" id="lines"></div>
-
-  <div class="title-container">
-    <div class="modern" id="incredibly">INCREDIBLY</div>
-    <div class="weird" id="strange">STRANGE</div>
-    <div class="modern" id="films">FILMS</div>
+<div class="homepage">
+  <!-- Vidéo gauche -->
+  <div class="video-container">
+    <video autoplay muted loop playsinline>
+      <source src="https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/videos/homepage_bg.mov" type="video/mp4">
+      Votre navigateur ne supporte pas la vidéo.
+    </video>
   </div>
 
-  <script>
-    function goToGenerator() {
-      window.location.href = "reco.html";
-    }
+  <!-- Texte droite -->
+  <div class="text-container">
+    <div class="title">
+      <span class="incredibly">INCREDIBLY</span>
+      <span class="strange">Strange</span>
+      <span class="films">FILMS</span>
+    </div>
+  </div>
+</div>
 
-    const strange = document.getElementById('strange');
-    setTimeout(() => {
-      strange.style.opacity = 1;
-      strange.style.animation = "glitch 1s infinite";
-    }, 1200);
+<script>
+function goToGenerator() {
+  window.location.href = "reco.html";
+}
+</script>
 
-    const linesEl = document.getElementById('lines');
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789<>/{}[]()*&^%$#@!~';
-    const lineCount = 60;
-    let lines = '';
-    for (let i = 0; i < lineCount; i++) {
-      let line = '';
-      for (let j = 0; j < 120; j++) {
-        line += chars[Math.floor(Math.random()*chars.length)];
-      }
-      lines += line + '\n';
-    }
-    linesEl.textContent = lines;
-  </script>
 </body>
 </html>
