@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Générateur de films</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 40px;
+      font-family: 'Montserrat', sans-serif;
+      background: #000;
+      color: #fff;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+      max-width: 1000px;
+      margin: auto;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .poster {
+      max-width: 300px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #fff;
+    }
+
+    .info {
+      flex: 1;
+      text-align: left;
+    }
+
+    .info h2 {
+      font-size: 3em;
+      margin-bottom: 10px;
+    }
+
+    .info p {
+      font-size: 1.2em;
+      margin: 5px 0;
+      color: #ccc;
+    }
+
+    button {
+      background: #ff3b3b;
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: scale(1.05);
+      transition: 0.2s;
+    }
+
+    @media (max-width: 800px) {
+      .container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .info h2 { font-size: 2em; }
+      .info p { font-size: 1em; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <img id="poster" class="poster" src="" alt="Affiche du film">
+    <div class="info">
+      <h2 id="title"></h2>
+      <p id="meta"></p>
+      <p id="desc"></p>
+      <button onclick="pickMovie()">Relancer</button>
+    </div>
+  </div>
+
+  <script>
+    let movies = [];
+
+    fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/base")
+      .then(res => res.json())
+      .then(data => {
+        movies = data;
+        pickMovie();
+      });
+
+    function pickMovie() {
+      const movie = movies[Math.floor(Math.random() * movies.length)];
+      document.getElementById("title").innerText = movie.title;
+      document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
+      document.getElementById("poster").src = movie.poster_url;
+      document.getElementById("desc").innerText = movie.description;
+    }
+  </script>
+</body>
+</html>
