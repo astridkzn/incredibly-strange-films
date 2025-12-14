@@ -2,107 +2,193 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Incredibly Strange Films - Homepage</title>
+<title>Incredibly Strange Films</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+
 <style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background-color: #000; /* fond noir */
-    font-family: 'Barriecito', sans-serif;
-    overflow: hidden;
-  }
+/* ================= RESET ================= */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #000;
+  font-family: 'Montserrat', sans-serif;
+  overflow: hidden;
+}
 
+/* ================= CURSOR ================= */
+body {
+  cursor: url("https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/cursor/open.jpg") 16 16, auto;
+}
+
+/* ================= LAYOUT ================= */
+.homepage {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+/* ===== VIDEO LEFT ===== */
+.video-container {
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ===== TEXT RIGHT ===== */
+.text-container {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+.title {
+  text-align: right;
+  line-height: 0.95;
+}
+
+.title .incredibly,
+.title .films {
+  font-weight: 700;
+  font-size: 12vw;
+  color: #fff;
+  display: block;
+}
+
+.title .strange {
+  font-weight: 400;
+  font-size: 10vw;
+  color: red;
+  display: block;
+}
+
+/* ================= CRT EFFECT ================= */
+.crt {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 8;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.025),
+      rgba(255,255,255,0.025) 1px,
+      rgba(0,0,0,0.025) 2px
+    );
+}
+
+/* léger flicker */
+@keyframes flicker {
+  0% { opacity: 0.85; }
+  50% { opacity: 0.9; }
+  100% { opacity: 0.85; }
+}
+
+.crt {
+  animation: flicker 4s infinite;
+}
+
+/* ================= FADE TRANSITION ================= */
+#fade {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+  z-index: 10;
+}
+
+#fade.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 900px) {
   .homepage {
-    display: flex;
-    height: 100vh;
-    width: 100%;
+    flex-direction: column;
   }
 
-  /* Vidéo gauche */
-  .video-container {
-    width: 50%;
-    height: 100%;
-    overflow: hidden;
-  }
-
-  .video-container video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* Texte droite */
+  .video-container,
   .text-container {
     width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-    padding: 20px;
+    height: 50%;
   }
 
   .title {
     text-align: center;
-    line-height: 1.1;
   }
 
   .title .incredibly,
   .title .films {
-    font-weight: bold;
-    color: #fff;
-    font-size: 12vw;
-    display: block;
+    font-size: 14vw;
   }
 
   .title .strange {
-    font-weight: normal;
-    color: red;
-    font-size: 10vw;
-    display: block;
+    font-size: 12vw;
   }
-
-  @media (max-width: 900px) {
-    .homepage {
-      flex-direction: column;
-    }
-    .video-container, .text-container {
-      width: 100%;
-      height: 50%;
-    }
-    .title .incredibly, .title .strange, .title .films {
-      font-size: 10vw;
-    }
-  }
+}
 </style>
 </head>
+
 <body onclick="goToGenerator()">
 
+<!-- CRT OVERLAY -->
+<div class="crt"></div>
+
+<!-- FADE -->
+<div id="fade"></div>
+
 <div class="homepage">
-  <!-- Vidéo gauche -->
+
+  <!-- VIDEO LEFT -->
   <div class="video-container">
     <video autoplay muted loop playsinline>
       <source src="https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/videos/homepage_bg.mov" type="video/mp4">
-      Votre navigateur ne supporte pas la vidéo.
     </video>
   </div>
 
-  <!-- Texte droite -->
+  <!-- TEXT RIGHT -->
   <div class="text-container">
     <div class="title">
       <span class="incredibly">INCREDIBLY</span>
-      <span class="strange">Strange</span>
+      <span class="strange">STRANGE</span>
       <span class="films">FILMS</span>
     </div>
   </div>
+
 </div>
 
 <script>
+const OPEN_CURSOR =
+  "url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/cursor/open.jpg') 16 16, auto";
+
+const CLOSE_CURSOR =
+  "url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/cursor/close.jpg') 16 16, auto";
+
+document.body.style.cursor = OPEN_CURSOR;
+
 function goToGenerator() {
-  window.location.href = "reco.html";
+  document.body.style.cursor = CLOSE_CURSOR;
+
+  const fade = document.getElementById("fade");
+  fade.classList.add("active");
+
+  setTimeout(() => {
+    window.location.href = "reco.html";
+  }, 600);
 }
 </script>
 
