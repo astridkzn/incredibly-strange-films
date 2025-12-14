@@ -7,16 +7,37 @@
   <style>
     body {
       font-family: system-ui, sans-serif;
-      background: #111;
+      background: linear-gradient(to bottom, #111, #222);
       color: #fff;
       text-align: center;
       padding: 40px;
     }
+
+    h1.main-title {
+      font-size: 3em;
+      color: #ff0044;
+      text-shadow: 2px 2px 8px #000;
+      margin-bottom: 10px;
+    }
+
+    h2.subtitle {
+      font-size: 2em;
+      color: #ffcc00;
+      margin-bottom: 30px;
+    }
+
     img {
       border-radius: 12px;
       margin: 20px 0;
       max-width: 220px;
+      box-shadow: 0 0 15px #ff0044;
+      transition: transform 0.3s;
     }
+
+    img:hover {
+      transform: scale(1.05);
+    }
+
     button {
       background: #ff3b3b;
       border: none;
@@ -25,19 +46,38 @@
       font-size: 16px;
       border-radius: 8px;
       cursor: pointer;
+      margin-bottom: 30px;
+      transition: background 0.3s, transform 0.2s;
     }
+
     button:hover {
       opacity: 0.9;
+      transform: scale(1.05);
     }
+
     .card {
       max-width: 400px;
       margin: auto;
+      background: #222;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #ff0044;
+    }
+
+    .card h2 {
+      margin-bottom: 10px;
+      color: #ffcc00;
+    }
+
+    .card p {
+      margin: 5px 0;
     }
   </style>
 </head>
 
 <body>
-  <h1>🎬 Film du moment</h1>
+  <h1 class="main-title">Incredibly Strange Films</h1>
+  <h2 class="subtitle">Film du moment</h2>
   <button onclick="pickMovie()">Nouvelle reco</button>
 
   <div class="card">
