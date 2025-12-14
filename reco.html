@@ -178,8 +178,8 @@
       document.getElementById("desc").innerText = movie.description;
 
       // Mettre le background full screen
-      if(movie.background_url) {
-        document.body.style.backgroundImage = `url(${movie.background_url})`;
+      if(movie.background_) {
+        document.body.style.backgroundImage = `url(${movie.background})`;
       } else {
         document.body.style.backgroundImage = `none`;
       }
