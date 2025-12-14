@@ -2,120 +2,118 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Incredibly Strange Films - Vintage</title>
+<title>Incredibly Strange Films - Vintage CRT</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  /* FONT RETRO MONITOR */
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-  /* Reset */
   body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    background: #000; /* fond noir terminal */
+    background: #000;
     font-family: 'Share Tech Mono', monospace;
     overflow: hidden;
     cursor: pointer;
-    color: #39ff14; /* vert terminal par défaut */
+    color: #39ff14;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
+    position: relative;
   }
 
-  /* Container pour le titre */
+  /* Lignes de code sur toute la largeur */
+  .lines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 0.8em;
+    line-height: 1.2em;
+    white-space: pre;
+    overflow: hidden;
+    pointer-events: none;
+    color: #39ff14;
+    opacity: 0.08;
+    border-top: 2px solid #39ff14;
+    border-bottom: 2px solid #39ff14;
+    padding: 5px 0;
+  }
+
+  /* Titre container */
   .title-container {
     position: relative;
-    width: 90%;
-    max-width: 1200px;
+    z-index: 1;
   }
 
-  /* Textes principaux */
   .modern {
     font-size: 8vw;
     font-weight: bold;
-    color: #fff; /* blanc pour INCREDIBLY/FILMS */
-    text-shadow:
-      0 0 2px #fff,
-      0 0 4px #fff,
-      0 0 6px #fff;
+    color: #39ff14;
     display: block;
+    text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14;
   }
 
   .weird {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 12vw;
-    color: #39ff14; /* vert CRT */
+    font-size: 8vw;
+    color: #39ff14;
     display: block;
     margin: -0.5em 0;
-    text-shadow: 0 0 3px #39ff14, 0 0 8px #39ff14;
+    opacity: 0;
+    text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14;
   }
 
-  /* Scanlines (effet écran CRT) */
-  body::after {
-    content: '';
-    position: fixed;
-    top:0;
-    left:0;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(
-      to bottom,
-      rgba(0,0,0,0) 0px,
-      rgba(0,0,0,0) 2px,
-      rgba(0,0,0,0.1) 2px,
-      rgba(0,0,0,0.1) 4px
-    );
-    pointer-events: none;
-  }
-
-  /* Lignes de code aléatoires */
-  .lines {
-    position: absolute;
-    top: 0;
-    left: 0;
-    font-size: 0.8em;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    overflow: hidden;
-    line-height: 1.2em;
-    white-space: pre;
-    opacity: 0.1;
-  }
-
-  @media (max-width: 600px) {
-    .modern { font-size: 12vw; }
-    .weird { font-size: 14vw; }
+  /* Glitch animation */
+  @keyframes glitch {
+    0% { opacity: 1; transform: translate(0,0) skew(0deg); }
+    10% { opacity: 0.8; transform: translate(-2px,1px) skew(-5deg); }
+    20% { opacity: 1; transform: translate(2px,-1px) skew(5deg); }
+    30% { opacity: 0.9; transform: translate(-1px,2px) skew(-3deg); }
+    40% { opacity: 1; transform: translate(1px,-2px) skew(3deg); }
+    50% { opacity: 0.95; transform: translate(-2px,1px) skew(-5deg); }
+    60% { opacity: 1; transform: translate(2px,-1px) skew(5deg); }
+    70% { opacity: 0.9; transform: translate(0px,2px) skew(-2deg); }
+    80% { opacity: 1; transform: translate(1px,-1px) skew(2deg); }
+    90% { opacity: 0.95; transform: translate(-1px,1px) skew(-3deg); }
+    100% { opacity: 1; transform: translate(0,0) skew(0deg); }
   }
 </style>
 </head>
 <body onclick="goToGenerator()">
-  <!-- Lignes de code aléatoires -->
+
+  <!-- Lignes de code en arrière-plan -->
   <div class="lines" id="lines"></div>
 
   <!-- Titre principal -->
   <div class="title-container">
-    <div class="modern">INCREDIBLY</div>
-    <div class="weird">STRANGE</div>
-    <div class="modern">FILMS</div>
+    <div class="modern" id="incredibly">INCREDIBLY</div>
+    <div class="weird" id="strange">STRANGE</div>
+    <div class="modern" id="films">FILMS</div>
   </div>
 
   <script>
-    // Redirection au clic
     function goToGenerator() {
       window.location.href = "reco.html";
     }
 
-    // Génération de fausses lignes de code pour l'effet CRT
+    // Animation glitch pour STRANGE
+    const strange = document.getElementById('strange');
+    setTimeout(() => {
+      strange.style.opacity = 1;
+      strange.style.animation = "glitch 1s infinite";
+    }, 1200); // apparaît après 1,2s
+
+    // Lignes de code aléatoires full-width
     const linesEl = document.getElementById('lines');
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789<>/{}[]()*&^%$#@!~';
+    const lineCount = 60;
     let lines = '';
-    const lineCount = 50;
     for (let i = 0; i < lineCount; i++) {
       let line = '';
-      for (let j = 0; j < 80; j++) {
+      for (let j = 0; j < 120; j++) {
         line += chars[Math.floor(Math.random()*chars.length)];
       }
       lines += line + '\n';
