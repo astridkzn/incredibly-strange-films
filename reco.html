@@ -177,7 +177,7 @@
       document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
       document.getElementById("desc").innerText = movie.description;
 
-      // Affiche (poster_file)
+      // Affiche l'image poster_file dans le placeholder
       if(movie.poster_file) {
         document.getElementById("poster").src = GITHUB_PREFIX + movie.poster_file;
       }
@@ -200,7 +200,7 @@
       }
     }
 
-    // Search input behavior
+    // Recherche avec dropdown
     searchInput.addEventListener('input', function() {
       const query = this.value.toLowerCase();
       suggestionsEl.innerHTML = '';
