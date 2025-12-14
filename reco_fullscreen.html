@@ -14,7 +14,7 @@
     padding: 0;
     height: 100%;
     font-family: 'Montserrat', sans-serif;
-    background-color: #000; /* fallback noir */
+    background-color: #000;
     color: #fff;
     overflow: hidden;
     cursor: url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/open.png') 16 16, auto;
@@ -52,6 +52,7 @@
     background: transparent;
     color: #fff;
     border: 2px solid #fff;
+    border-radius: 12px; /* bords arrondis */
   }
 
   #search::placeholder {
@@ -68,6 +69,7 @@
     background: #000;
     border: 2px solid #fff;
     border-top: none;
+    border-radius: 0 0 12px 12px; /* arrondi en bas seulement */
     max-height: 200px;
     overflow-y: auto;
     z-index: 10;
@@ -98,13 +100,14 @@
   }
 
   .info h2 {
-    font-size: 3em;
+    font-size: 4.5em; /* 1,5 fois plus grand que 3em */
     margin: 0 0 10px;
   }
 
   .info p {
     font-size: 1.2em;
     margin: 5px 0;
+    font-weight: normal; /* pas en gras */
   }
 
   .info button {
@@ -115,6 +118,7 @@
     border: 2px solid #fff;
     cursor: pointer;
     font-size: 16px;
+    border-radius: 12px; /* bords arrondis */
   }
 
   #warning {
@@ -124,7 +128,7 @@
 
   /* Mobile */
   @media (max-width: 900px) {
-    .info h2 { font-size: 2em; }
+    .info h2 { font-size: 3em; }
     .info p { font-size: 1em; }
     #search { font-size: 14px; padding: 10px; }
   }
@@ -179,19 +183,19 @@ function pickMovieByTitle(title) {
   handleRelaunchCount();
 }
 
-// Display movie
+// Display movie with fallback background
 function displayMovie(movie) {
   document.getElementById("title").innerText = movie.title;
   document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
   document.getElementById("desc").innerText = movie.description;
 
-  // Background image or fallback
   const bgEl = document.getElementById("background");
-  if(movie.background_file) {
+  if(movie.background_file && movie.background_file.trim() !== "") {
     bgEl.style.backgroundImage = `url(${GITHUB_PREFIX + movie.background_file})`;
+    bgEl.style.backgroundColor = ''; // supprime fallback si image présente
   } else {
     bgEl.style.backgroundImage = 'none';
-    bgEl.style.backgroundColor = '#000';
+    bgEl.style.backgroundColor = '#000'; // fallback noir
   }
 }
 
