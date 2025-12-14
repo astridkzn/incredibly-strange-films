@@ -11,8 +11,8 @@
       margin: 0;
       padding: 40px;
       font-family: 'Montserrat', sans-serif;
-      background: #000;
-      color: #fff;
+      background: #fff; /* fond blanc */
+      color: #000; /* texte noir */
     }
 
     .container {
@@ -28,7 +28,7 @@
     .poster {
       max-width: 300px;
       border-radius: 12px;
-      box-shadow: 0 0 20px #fff;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
     }
 
     .info {
@@ -39,18 +39,19 @@
     .info h2 {
       font-size: 3em;
       margin-bottom: 10px;
+      color: #000;
     }
 
     .info p {
       font-size: 1.2em;
       margin: 5px 0;
-      color: #ccc;
+      color: #333;
     }
 
     button {
-      background: #ff3b3b;
+      background: #000;
       border: none;
-      color: white;
+      color: #fff;
       padding: 12px 20px;
       font-size: 16px;
       border-radius: 8px;
@@ -97,7 +98,7 @@
 
   <script>
     let movies = [];
-    let relaunchCount = 0; // compteur de relances
+    let relaunchCount = 0;
 
     const messages = [
       "Eh",
@@ -120,11 +121,8 @@
       document.getElementById("poster").src = movie.poster_url;
       document.getElementById("desc").innerText = movie.description;
 
-      // compteur de relances
       relaunchCount++;
-
-      // déterminer le message à afficher
-      const step = Math.floor(relaunchCount / 5) - 1; // chaque tranche de 5
+      const step = Math.floor(relaunchCount / 5) - 1;
       if (step >= 0 && step < messages.length) {
         const warningEl = document.getElementById("warning");
         warningEl.textContent = messages[step];
@@ -134,5 +132,6 @@
   </script>
 </body>
 </html>
+
 
 
