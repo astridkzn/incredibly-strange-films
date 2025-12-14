@@ -1,53 +1,101 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Incredibly Strange Films</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Creepster&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-      cursor: pointer;
-      text-align: center;
-    }
+<meta charset="UTF-8">
+<title>Incredibly Strange Films - Vintage</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* FONT RETRO MONITOR */
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-    .title-container {
-      position: relative;
-      width: 90%;
-      max-width: 1200px;
-    }
+  /* Reset */
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #000; /* fond noir terminal */
+    font-family: 'Share Tech Mono', monospace;
+    overflow: hidden;
+    cursor: pointer;
+    color: #39ff14; /* vert terminal par défaut */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
 
-    .modern {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 10vw;
-      font-weight: 900;
-      color: #fff;
-      display: block;
-    }
+  /* Container pour le titre */
+  .title-container {
+    position: relative;
+    width: 90%;
+    max-width: 1200px;
+  }
 
-    .weird {
-      font-family: 'Creepster', cursive;
-      font-size: 14vw;
-      color: #39ff14; /* vert néon */
-      display: block;
-      margin: -0.5em 0;
-    }
+  /* Textes principaux */
+  .modern {
+    font-size: 8vw;
+    font-weight: bold;
+    color: #fff; /* blanc pour INCREDIBLY/FILMS */
+    text-shadow:
+      0 0 2px #fff,
+      0 0 4px #fff,
+      0 0 6px #fff;
+    display: block;
+  }
 
-    @media (max-width: 600px) {
-      .modern { font-size: 12vw; }
-      .weird { font-size: 16vw; }
-    }
-  </style>
+  .weird {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12vw;
+    color: #39ff14; /* vert CRT */
+    display: block;
+    margin: -0.5em 0;
+    text-shadow: 0 0 3px #39ff14, 0 0 8px #39ff14;
+  }
+
+  /* Scanlines (effet écran CRT) */
+  body::after {
+    content: '';
+    position: fixed;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.1) 2px,
+      rgba(0,0,0,0.1) 4px
+    );
+    pointer-events: none;
+  }
+
+  /* Lignes de code aléatoires */
+  .lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 0.8em;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    line-height: 1.2em;
+    white-space: pre;
+    opacity: 0.1;
+  }
+
+  @media (max-width: 600px) {
+    .modern { font-size: 12vw; }
+    .weird { font-size: 14vw; }
+  }
+</style>
 </head>
 <body onclick="goToGenerator()">
+  <!-- Lignes de code aléatoires -->
+  <div class="lines" id="lines"></div>
+
+  <!-- Titre principal -->
   <div class="title-container">
     <div class="modern">INCREDIBLY</div>
     <div class="weird">STRANGE</div>
@@ -55,10 +103,25 @@
   </div>
 
   <script>
+    // Redirection au clic
     function goToGenerator() {
-      // Redirige vers la page de génération
       window.location.href = "reco.html";
     }
+
+    // Génération de fausses lignes de code pour l'effet CRT
+    const linesEl = document.getElementById('lines');
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789<>/{}[]()*&^%$#@!~';
+    let lines = '';
+    const lineCount = 50;
+    for (let i = 0; i < lineCount; i++) {
+      let line = '';
+      for (let j = 0; j < 80; j++) {
+        line += chars[Math.floor(Math.random()*chars.length)];
+      }
+      lines += line + '\n';
+    }
+    linesEl.textContent = lines;
   </script>
 </body>
 </html>
+
