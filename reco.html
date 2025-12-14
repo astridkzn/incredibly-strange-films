@@ -11,7 +11,7 @@
       margin: 0;
       padding: 40px;
       font-family: 'Montserrat', sans-serif;
-      background: #fff; /* fond blanc par défaut */
+      background: #fff;
       color: #000;
       background-size: cover;
       background-position: center;
@@ -138,6 +138,7 @@
   </div>
 
   <script>
+    const GITHUB_PREFIX = "https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/"; // <-- Mets ton username et repo
     let movies = [];
     let relaunchCount = 0;
 
@@ -174,14 +175,18 @@
     function displayMovie(movie) {
       document.getElementById("title").innerText = movie.title;
       document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
-      document.getElementById("poster").src = movie.poster_url;
       document.getElementById("desc").innerText = movie.description;
 
-      // Mettre le background full screen
-      if(movie.background_) {
-        document.body.style.backgroundImage = `url(${movie.background})`;
+      // Poster via fichier
+      if(movie.poster_file) {
+        document.getElementById("poster").src = GITHUB_PREFIX + movie.poster_file;
+      }
+
+      // Background full screen via fichier
+      if(movie.background_file) {
+        document.body.style.backgroundImage = `url(${GITHUB_PREFIX + movie.background_file})`;
       } else {
-        document.body.style.backgroundImage = `none`;
+        document.body.style.backgroundImage = 'none';
       }
     }
 
