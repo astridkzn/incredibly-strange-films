@@ -48,6 +48,38 @@
       color: #333;
     }
 
+    input#search {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+
+    ul#suggestions {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 0;
+      max-height: 150px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      display: none;
+      background: #fff;
+      color: #000;
+      position: absolute;
+      width: calc(100% - 40px); /* ajuste selon padding */
+      z-index: 10;
+    }
+
+    ul#suggestions li {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    ul#suggestions li:hover {
+      background: #f0f0f0;
+    }
+
     button {
       background: #000;
       border: none;
@@ -88,6 +120,8 @@
   <div class="container">
     <img id="poster" class="poster" src="" alt="Affiche du film">
     <div class="info">
+      <input type="text" id="search" placeholder="Rechercher un film...">
+      <ul id="suggestions"></ul>
       <h2 id="title"></h2>
       <p id="meta"></p>
       <p id="desc"></p>
@@ -107,6 +141,9 @@
       "C'EST PAS INFINI"
     ];
 
+    const searchInput = document.getElementById('search');
+    const suggestionsEl = document.getElementById('suggestions');
+
     fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/base")
       .then(res => res.json())
       .then(data => {
@@ -116,11 +153,25 @@
 
     function pickMovie() {
       const movie = movies[Math.floor(Math.random() * movies.length)];
+      displayMovie(movie);
+      handleRelaunchCount();
+    }
+
+    function pickMovieByTitle(title) {
+      const movie = movies.find(m => m.title === title);
+      if (!movie) return;
+      displayMovie(movie);
+      handleRelaunchCount();
+    }
+
+    function displayMovie(movie) {
       document.getElementById("title").innerText = movie.title;
       document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
       document.getElementById("poster").src = movie.poster_url;
       document.getElementById("desc").innerText = movie.description;
+    }
 
+    function handleRelaunchCount() {
       relaunchCount++;
       const step = Math.floor(relaunchCount / 5) - 1;
       if (step >= 0 && step < messages.length) {
@@ -129,9 +180,35 @@
         warningEl.style.display = "block";
       }
     }
+
+    // Search input behavior
+    searchInput.addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      suggestionsEl.innerHTML = '';
+      if (!query) {
+        suggestionsEl.style.display = 'none';
+        return;
+      }
+
+      const matches = movies.filter(m => m.title.toLowerCase().includes(query));
+      if (matches.length === 0) {
+        suggestionsEl.style.display = 'none';
+        return;
+      }
+
+      matches.forEach(m => {
+        const li = document.createElement('li');
+        li.textContent = m.title;
+        li.addEventListener('click', () => {
+          pickMovieByTitle(m.title);
+          suggestionsEl.style.display = 'none';
+          searchInput.value = '';
+        });
+        suggestionsEl.appendChild(li);
+      });
+
+      suggestionsEl.style.display = 'block';
+    });
   </script>
 </body>
 </html>
-
-
-
