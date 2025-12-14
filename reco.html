@@ -177,9 +177,9 @@
       document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
       document.getElementById("desc").innerText = movie.description;
 
-      // Poster via fichier
+      // Affiche (poster)
       if(movie.poster_file) {
-        document.getElementById("poster").src = GITHUB_PREFIX + movie.poster_file;
+        document.getElementById("poster_file").src = GITHUB_PREFIX + movie.poster_file;
       }
 
       // Background full screen via fichier
