@@ -11,8 +11,12 @@
       margin: 0;
       padding: 40px;
       font-family: 'Montserrat', sans-serif;
-      background: #fff; /* fond blanc */
-      color: #000; /* texte noir */
+      background: #fff; /* fond blanc par défaut */
+      color: #000;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: background 0.5s ease;
     }
 
     .container {
@@ -23,6 +27,9 @@
       margin: auto;
       align-items: center;
       justify-content: center;
+      background: rgba(255,255,255,0.8);
+      padding: 20px;
+      border-radius: 12px;
     }
 
     .poster {
@@ -67,7 +74,7 @@
       background: #fff;
       color: #000;
       position: absolute;
-      width: calc(100% - 40px); /* ajuste selon padding */
+      width: calc(100% - 40px);
       z-index: 10;
     }
 
@@ -169,6 +176,13 @@
       document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
       document.getElementById("poster").src = movie.poster_url;
       document.getElementById("desc").innerText = movie.description;
+
+      // Mettre le background full screen
+      if(movie.background_url) {
+        document.body.style.backgroundImage = `url(${movie.background_url})`;
+      } else {
+        document.body.style.backgroundImage = `none`;
+      }
     }
 
     function handleRelaunchCount() {
