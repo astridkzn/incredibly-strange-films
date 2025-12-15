@@ -31,4 +31,216 @@
     width: 100%;
     padding: 12px;
     font-size: 16px;
-    border
+    border: 2px solid white;
+    border-radius: 12px;
+    outline: none;
+    background: transparent;
+    color: white;
+  }
+
+  #search::placeholder {
+    color: #ccc;
+  }
+
+  #suggestions {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+    color: white;
+    background: rgba(0,0,0,0.8);
+    border: 2px solid white;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  #suggestions li {
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  #suggestions li:hover {
+    background: #222;
+  }
+
+  /* Video background */
+  #backgroundVideo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    background-color: #000; /* fallback noir */
+  }
+
+  /* Infos en bas */
+  .info {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+    max-width: 70%;
+  }
+
+  .info h2 {
+    font-size: 8em; /* deux fois plus grand */
+    margin: 0 0 10px;
+  }
+
+  .info p {
+    font-size: 1.2em;
+    margin: 5px 0;
+    font-weight: normal;
+  }
+
+  .button-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; 
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .button-container p {
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .button-container button {
+    padding: 12px 20px;
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  /* Mobile responsive */
+  @media(max-width: 900px) {
+    .info {
+      max-width: 90%;
+    }
+
+    .info h2 {
+      font-size: 5em;
+    }
+
+    .button-container {
+      flex-direction: row-reverse; 
+      justify-content: flex-start;
+      margin-top: 10px;
+    }
+
+    .button-container p {
+      order: 2; 
+    }
+
+    .button-container button {
+      order: 1;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <input type="text" id="search" placeholder="Rechercher un film...">
+  <ul id="suggestions"></ul>
+</header>
+
+<video id="backgroundVideo" autoplay muted loop></video>
+
+<div class="info">
+  <h2 id="title"></h2>
+  <p id="meta"></p>
+  <p id="desc"></p>
+  <div class="button-container">
+    <p id="warning"></p>
+    <button onclick="pickMovie()">Relancer</button>
+  </div>
+</div>
+
+<script>
+const GITHUB_VIDEO_PREFIX = "https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/videos/";
+let movies = [];
+let relaunchCount = 0;
+const messages = ["Eh","Abuse-pas","Ehhhhh","C'EST PAS INFINI"];
+
+const searchInput = document.getElementById("search");
+const suggestionsEl = document.getElementById("suggestions");
+const warningEl = document.getElementById("warning");
+const bgVideo = document.getElementById("backgroundVideo");
+
+// Récupère les films
+fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/base")
+  .then(res => res.json())
+  .then(data => {
+    movies = data;
+    pickMovie();
+  });
+
+function pickMovie() {
+  const movie = movies[Math.floor(Math.random() * movies.length)];
+  displayMovie(movie);
+  handleRelaunch();
+}
+
+function pickMovieByTitle(title) {
+  const movie = movies.find(m => m.title === title);
+  if (!movie) return;
+  displayMovie(movie);
+  handleRelaunch();
+}
+
+function displayMovie(movie) {
+  document.getElementById("title").innerText = movie.title;
+  document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
+  document.getElementById("desc").innerText = movie.description;
+
+  // Background vidéo
+  if(movie.background_file && movie.background_file.trim() !== "") {
+    bgVideo.src = GITHUB_VIDEO_PREFIX + movie.background_file;
+    bgVideo.style.display = "block";
+  } else {
+    bgVideo.src = "";
+    bgVideo.style.display = "none";
+    document.body.style.backgroundColor = "#000"; // fallback noir
+  }
+}
+
+function handleRelaunch() {
+  relaunchCount++;
+  const step = Math.floor(relaunchCount / 5) - 1;
+  warningEl.innerText = messages[step] || '';
+}
+
+// Dropdown recherche
+searchInput.addEventListener("input", function() {
+  const query = this.value.toLowerCase();
+  suggestionsEl.innerHTML = "";
+  if (!query) {
+    suggestionsEl.style.display = "none";
+    return;
+  }
+  const matches = movies.filter(m => m.title.toLowerCase().includes(query));
+  matches.forEach(m => {
+    const li = document.createElement("li");
+    li.textContent = m.title;
+    li.onclick = () => {
+      pickMovieByTitle(m.title);
+      suggestionsEl.style.display = "none";
+      searchInput.value = "";
+    };
+    suggestionsEl.appendChild(li);
+  });
+  suggestionsEl.style.display = matches.length ? "block" : "none";
+});
+</script>
+
+</body>
+</html>
