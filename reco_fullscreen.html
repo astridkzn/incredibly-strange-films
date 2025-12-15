@@ -113,6 +113,7 @@ function displayMovie(movie) {
 
   // Background full screen
   if(movie.background_file) {
+    console.log(movie.background_file);
     document.body.style.backgroundImage = `url(${GITHUB_PREFIX + movie.background_file})`;
   } else {
     document.body.style.backgroundImage = 'none';
