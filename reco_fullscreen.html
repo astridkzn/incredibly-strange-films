@@ -187,8 +187,8 @@ function displayMovie(movie) {
 
   // Background image or fallback
   const bgEl = document.getElementById("background");
-  if(movie.background_file) {
-    bgEl.style.backgroundImage = `url(${GITHUB_PREFIX + movie.background_file})`;
+  if(movie.background_file && movie.background_file.trim() !== "") {
+    bgEl.style.backgroundImage = `url(${movie.background_file})`;
   } else {
     bgEl.style.backgroundImage = 'none';
     bgEl.style.backgroundColor = '#000';
