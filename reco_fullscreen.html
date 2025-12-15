@@ -52,12 +52,10 @@
     background: transparent;
     color: #fff;
     border: 2px solid #fff;
-    border-radius: 12px; /* bords arrondis */
+    border-radius: 12px;
   }
 
-  #search::placeholder {
-    color: #ccc;
-  }
+  #search::placeholder { color: #ccc; }
 
   #suggestions {
     list-style: none;
@@ -69,7 +67,7 @@
     background: #000;
     border: 2px solid #fff;
     border-top: none;
-    border-radius: 0 0 12px 12px; /* arrondi en bas seulement */
+    border-radius: 0 0 12px 12px;
     max-height: 200px;
     overflow-y: auto;
     z-index: 10;
@@ -81,26 +79,24 @@
     color: #fff;
   }
 
-  #suggestions li:hover {
-    background: #222;
-  }
+  #suggestions li:hover { background: #222; }
 
   /* Infos en bas */
   .info {
-    position: absolute;
+    position: fixed; /* fixé en bas */
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
     max-width: 900px;
-    background: rgba(0,0,0,0.0); /* transparent */
+    background: rgba(0,0,0,0.0);
     padding: 20px;
     color: #fff;
     z-index: 10;
   }
 
   .info h2 {
-    font-size: 4.5em; /* 1,5 fois plus grand que 3em */
+    font-size: 4.5em; /* titre 1,5x plus grand */
     margin: 0 0 10px;
   }
 
@@ -110,21 +106,23 @@
     font-weight: normal; /* pas en gras */
   }
 
+  .button-container {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* espace entre bouton et message */
+  }
+
   .info button {
-    margin-top: 10px;
     padding: 12px 20px;
     background: transparent;
     color: #fff;
     border: 2px solid #fff;
     cursor: pointer;
     font-size: 16px;
-    border-radius: 12px; /* bords arrondis */
+    border-radius: 12px;
   }
 
-  #warning {
-    margin-top: 10px;
-    font-weight: bold;
-  }
+  #warning { font-weight: bold; margin: 0; }
 
   /* Mobile */
   @media (max-width: 900px) {
@@ -151,8 +149,10 @@
   <h2 id="title"></h2>
   <p id="meta"></p>
   <p id="desc"></p>
-  <button onclick="pickMovie()">Relancer</button>
-  <p id="warning"></p>
+  <div class="button-container">
+    <button onclick="pickMovie()">Relancer</button>
+    <p id="warning"></p>
+  </div>
 </section>
 
 <script>
@@ -162,6 +162,7 @@ let relaunchCount = 0;
 const messages = ["Eh","Abuse-pas","Ehhhhh","C'EST PAS INFINI"];
 const searchInput = document.getElementById("search");
 const suggestionsEl = document.getElementById("suggestions");
+const warningEl = document.getElementById("warning");
 
 // Fetch movies
 fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/base")
@@ -183,7 +184,7 @@ function pickMovieByTitle(title) {
   handleRelaunchCount();
 }
 
-// Display movie with fallback background
+// Display movie with proper background handling
 function displayMovie(movie) {
   document.getElementById("title").innerText = movie.title;
   document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
@@ -192,10 +193,13 @@ function displayMovie(movie) {
   const bgEl = document.getElementById("background");
   if(movie.background_file && movie.background_file.trim() !== "") {
     bgEl.style.backgroundImage = `url(${GITHUB_PREFIX + movie.background_file})`;
-    bgEl.style.backgroundColor = ''; // supprime fallback si image présente
+    bgEl.style.backgroundColor = '';
+    bgEl.style.backgroundSize = 'cover';
+    bgEl.style.backgroundPosition = 'center';
+    bgEl.style.backgroundRepeat = 'no-repeat';
   } else {
     bgEl.style.backgroundImage = 'none';
-    bgEl.style.backgroundColor = '#000'; // fallback noir
+    bgEl.style.backgroundColor = '#000';
   }
 }
 
@@ -203,7 +207,7 @@ function displayMovie(movie) {
 function handleRelaunchCount() {
   relaunchCount++;
   const step = Math.floor(relaunchCount/5)-1;
-  if(messages[step]) document.getElementById("warning").innerText = messages[step];
+  warningEl.innerText = messages[step] || '';
 }
 
 // Search dropdown
