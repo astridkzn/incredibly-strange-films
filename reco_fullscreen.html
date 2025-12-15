@@ -11,14 +11,20 @@
     padding: 0;
     height: 100%;
     font-family: 'Montserrat', sans-serif;
-    background-color: #000;
+    background-color: #000; /* fallback noir */
     color: white;
   }
 
-  body {
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+  /* Fullscreen background image */
+  #bgImg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    background-color: #000;
   }
 
   header {
@@ -85,15 +91,15 @@
   .info p {
     font-size: 1.2em;
     margin: 5px 0;
-    font-weight: normal;
+    font-weight: normal; /* pas en gras */
   }
 
   /* Container bouton + message */
   .button-container {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* bouton à droite, message à gauche */
-    width: 100%;
+    justify-content: flex-end; /* desktop: bouton à droite */
+    gap: 15px;
     margin-top: 20px;
   }
 
@@ -139,6 +145,8 @@
 </style>
 </head>
 <body>
+<!-- Background fullscreen -->
+<img id="bgImg" src="" alt="background">
 
 <header>
   <input type="text" id="search" placeholder="Rechercher un film...">
@@ -164,6 +172,7 @@ const messages = ["Eh","Abuse-pas","Ehhhhh","C'EST PAS INFINI"];
 const searchInput = document.getElementById("search");
 const suggestionsEl = document.getElementById("suggestions");
 const warningEl = document.getElementById("warning");
+const bgImg = document.getElementById("bgImg");
 
 // Récupère les films
 fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/base")
@@ -173,12 +182,14 @@ fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/bas
     pickMovie();
   });
 
+// Pick aléatoire
 function pickMovie() {
   const movie = movies[Math.floor(Math.random() * movies.length)];
   displayMovie(movie);
   handleRelaunch();
 }
 
+// Pick par titre
 function pickMovieByTitle(title) {
   const movie = movies.find(m => m.title === title);
   if (!movie) return;
@@ -186,26 +197,28 @@ function pickMovieByTitle(title) {
   handleRelaunch();
 }
 
+// Display movie
 function displayMovie(movie) {
   document.getElementById("title").innerText = movie.title;
   document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
   document.getElementById("desc").innerText = movie.description;
 
   if(movie.background_file && movie.background_file.trim() !== "") {
-    document.body.style.backgroundImage = `url(${GITHUB_PREFIX + movie.background_file})`;
+    bgImg.src = GITHUB_PREFIX + movie.background_file.trim();
   } else {
-    document.body.style.backgroundImage = 'none';
-    document.body.style.backgroundColor = '#000';
+    bgImg.src = "";
+    document.body.style.backgroundColor = "#000";
   }
 }
 
+// Relance compteur
 function handleRelaunch() {
   relaunchCount++;
   const step = Math.floor(relaunchCount / 5) - 1;
   warningEl.innerText = messages[step] || '';
 }
 
-// Dropdown recherche
+// Search dropdown
 searchInput.addEventListener("input", function() {
   const query = this.value.toLowerCase();
   suggestionsEl.innerHTML = "";
@@ -227,6 +240,5 @@ searchInput.addEventListener("input", function() {
   suggestionsEl.style.display = matches.length ? "block" : "none";
 });
 </script>
-
 </body>
 </html>
