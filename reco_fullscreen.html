@@ -110,7 +110,7 @@ function displayMovie(movie) {
   document.getElementById("title").innerText = movie.title;
   document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
   document.getElementById("desc").innerText = movie.description;
-
+  console.log(movie)
   // Background full screen
   if(movie.background_file) {
     console.log(movie.background_file);
