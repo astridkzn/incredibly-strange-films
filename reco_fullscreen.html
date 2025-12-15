@@ -17,7 +17,6 @@
     background-color: #000; /* fallback noir */
     color: #fff;
     overflow: hidden;
-    cursor: url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/open.png') 16 16, auto;
   }
 
   /* Fullscreen background */
@@ -217,16 +216,6 @@ searchInput.addEventListener("input", function() {
   });
   suggestionsEl.style.display = matches.length ? 'block' : 'none';
 });
-
-// =====================
-// CURSEUR DYNAMIQUE
-// =====================
-const OPEN_CURSOR = "url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/open.png') 16 16, auto";
-const CLOSE_CURSOR = "url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/close.png') 16 16, auto";
-document.body.style.cursor = OPEN_CURSOR;
-document.addEventListener("mousedown",()=>{ document.body.style.cursor = CLOSE_CURSOR; });
-document.addEventListener("mouseup",()=>{ document.body.style.cursor = OPEN_CURSOR; });
-</script>
 
 </body>
 </html>
