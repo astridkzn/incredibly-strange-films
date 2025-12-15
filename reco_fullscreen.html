@@ -20,21 +20,21 @@
     cursor: url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/open.png') 16 16, auto;
   }
 
-  /* Fullscreen background */
+  /* Background fullscreen */
   .background-section {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #000; 
+    background-color: #000; /* fallback noir */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     z-index: -1;
   }
 
-  /* Search bar en haut */
+  /* Barre de recherche */
   header {
     position: absolute;
     top: 20px;
@@ -52,7 +52,7 @@
     background: transparent;
     color: #fff;
     border: 2px solid #fff;
-    border-radius: 12px; 
+    border-radius: 12px;
   }
 
   #search::placeholder {
@@ -87,7 +87,7 @@
 
   /* Infos en bas */
   .info {
-    position: fixed; 
+    position: fixed;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
@@ -100,20 +100,21 @@
   }
 
   .info h2 {
-    font-size: 4.5em; 
+    font-size: 4.5em; /* titre 1,5x plus grand */
     margin: 0 0 10px;
   }
 
   .info p {
     font-size: 1.2em;
     margin: 5px 0;
-    font-weight: normal; 
+    font-weight: normal; /* DESCRIPTION EN NORMAL */
   }
 
+  /* Conteneur bouton + message */
   .button-container {
     display: flex;
     align-items: center;
-    gap: 20px; 
+    gap: 20px; /* espace entre bouton et message */
   }
 
   .info button {
@@ -123,11 +124,14 @@
     border: 2px solid #fff;
     cursor: pointer;
     font-size: 16px;
-    border-radius: 12px; 
+    border-radius: 12px;
+    flex-shrink: 0;
   }
 
   #warning {
     font-weight: bold;
+    margin: 0;
+    white-space: nowrap;
   }
 
   /* Mobile */
@@ -172,14 +176,14 @@ fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/bas
   .then(res => res.json())
   .then(data => { movies = data; pickMovie(); });
 
-// Pick random movie
+// Affiche un film au hasard
 function pickMovie() {
   const movie = movies[Math.floor(Math.random()*movies.length)];
   displayMovie(movie);
   handleRelaunchCount();
 }
 
-// Pick by title
+// Affiche un film par titre
 function pickMovieByTitle(title) {
   const movie = movies.find(m => m.title===title);
   if(!movie) return;
@@ -187,7 +191,7 @@ function pickMovieByTitle(title) {
   handleRelaunchCount();
 }
 
-// Display movie with fallback background
+// Affiche le film avec background correct
 function displayMovie(movie) {
   document.getElementById("title").innerText = movie.title;
   document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
@@ -195,28 +199,27 @@ function displayMovie(movie) {
 
   const bgEl = document.getElementById("background");
 
-  // Affiche le background si présent, sinon fallback noir
-  if(movie.background_file && movie.background_file.toString().trim() !== "") {
+  if(movie.background_file && movie.background_file.trim() !== "") {
     const url = GITHUB_PREFIX + movie.background_file.trim();
     bgEl.style.backgroundImage = `url('${url}')`;
-    bgEl.style.backgroundColor = '';
+    bgEl.style.backgroundColor = ''; // supprime fallback
     bgEl.style.backgroundSize = 'cover';
-    bgEl.style.backgroundPosition = 'top center'; // remonte le background
+    bgEl.style.backgroundPosition = 'center top'; // remonte le background
     bgEl.style.backgroundRepeat = 'no-repeat';
   } else {
     bgEl.style.backgroundImage = 'none';
-    bgEl.style.backgroundColor = '#000';
+    bgEl.style.backgroundColor = '#000'; // fallback noir
   }
 }
 
-// Relaunch count
+// Compteur de relance
 function handleRelaunchCount() {
   relaunchCount++;
-  const step = Math.floor(relaunchCount/5)-1;
+  const step = Math.floor(relaunchCount / 5) - 1;
   warningEl.innerText = messages[step] || '';
 }
 
-// Search dropdown
+// Dropdown de recherche
 searchInput.addEventListener("input", function() {
   const query = this.value.toLowerCase();
   suggestionsEl.innerHTML = "";
@@ -238,6 +241,7 @@ const CLOSE_CURSOR = "url('https://raw.githubusercontent.com/astridkzn/incredibl
 document.body.style.cursor = OPEN_CURSOR;
 document.addEventListener("mousedown",()=>{ document.body.style.cursor = CLOSE_CURSOR; });
 document.addEventListener("mouseup",()=>{ document.body.style.cursor = OPEN_CURSOR; });
+
 </script>
 
 </body>
