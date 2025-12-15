@@ -14,7 +14,7 @@
     padding: 0;
     height: 100%;
     font-family: 'Montserrat', sans-serif;
-    background-color: #000; /* fallback noir */
+    background-color: #000;
     color: #fff;
     overflow: hidden;
     cursor: url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/open.png') 16 16, auto;
@@ -27,7 +27,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #000; /* fallback noir */
+    background-color: #000;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -54,9 +54,7 @@
     border: 2px solid #fff;
   }
 
-  #search::placeholder {
-    color: #ccc;
-  }
+  #search::placeholder { color: #ccc; }
 
   #suggestions {
     list-style: none;
@@ -91,7 +89,6 @@
     transform: translateX(-50%);
     width: 90%;
     max-width: 900px;
-    background: rgba(0,0,0,0.0); /* transparent */
     padding: 20px;
     color: #fff;
     z-index: 10;
@@ -152,14 +149,13 @@
 </section>
 
 <script>
-const GITHUB_PREFIX = "https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/";
 let movies = [];
 let relaunchCount = 0;
 const messages = ["Eh","Abuse-pas","Ehhhhh","C'EST PAS INFINI"];
 const searchInput = document.getElementById("search");
 const suggestionsEl = document.getElementById("suggestions");
 
-// Fetch movies
+// Fetch movies depuis OpenSheet
 fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/base")
   .then(res => res.json())
   .then(data => { movies = data; pickMovie(); });
@@ -171,9 +167,9 @@ function pickMovie() {
   handleRelaunchCount();
 }
 
-// Pick by title
+// Pick movie by title
 function pickMovieByTitle(title) {
-  const movie = movies.find(m => m.title===title);
+  const movie = movies.find(m => m.title === title);
   if(!movie) return;
   displayMovie(movie);
   handleRelaunchCount();
@@ -185,10 +181,10 @@ function displayMovie(movie) {
   document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
   document.getElementById("desc").innerText = movie.description;
 
-  // Background image or fallback
   const bgEl = document.getElementById("background");
-  if(movie.background_file && movie.background_file.trim() !== "") {
-    bgEl.style.backgroundImage = `url(${movie.background_file})`;
+  const bgUrl = movie.background_file ? movie.background_file.trim() : "";
+  if(bgUrl) {
+    bgEl.style.backgroundImage = `url('${bgUrl}')`;
   } else {
     bgEl.style.backgroundImage = 'none';
     bgEl.style.backgroundColor = '#000';
@@ -218,9 +214,7 @@ searchInput.addEventListener("input", function() {
   suggestionsEl.style.display = matches.length ? 'block' : 'none';
 });
 
-// =====================
-// CURSEUR DYNAMIQUE
-// =====================
+// Curseur dynamique
 const OPEN_CURSOR = "url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/open.png') 16 16, auto";
 const CLOSE_CURSOR = "url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/close.png') 16 16, auto";
 document.body.style.cursor = OPEN_CURSOR;
