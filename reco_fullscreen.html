@@ -1,47 +1,30 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<title>Générateur de films - Fullscreen</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
-
+<meta charset="UTF-8">
+<title>Reco Fullscreen Test</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  * { box-sizing: border-box; }
-
-  body, html {
+  html, body {
     margin: 0;
     padding: 0;
     height: 100%;
     font-family: 'Montserrat', sans-serif;
-    background-color: #000; /* fallback noir */
-    color: #fff;
-    overflow: hidden;
-    cursor: url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/open.png') 16 16, auto;
   }
 
-  /* Fullscreen background */
-  .background-section {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #000; /* fallback noir */
+  body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    z-index: -1;
+    color: white;
   }
 
-  /* Search bar en haut */
   header {
     position: absolute;
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    width: 90%;
-    max-width: 600px;
+    width: 80%;
     z-index: 10;
   }
 
@@ -49,184 +32,114 @@
     width: 100%;
     padding: 12px;
     font-size: 16px;
-    background: transparent;
-    color: #fff;
-    border: 2px solid #fff;
-  }
-
-  #search::placeholder {
-    color: #ccc;
+    border: none;
+    outline: none;
+    background: none; /* pas de fond */
+    color: white;
+    border-bottom: 2px solid white; /* juste un trait si tu veux */
   }
 
   #suggestions {
     list-style: none;
-    margin: 0;
     padding: 0;
+    margin: 0;
     display: none;
-    position: absolute;
-    width: 100%;
-    background: #000;
-    border: 2px solid #fff;
-    border-top: none;
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 10;
+    color: white;
   }
 
-  #suggestions li {
-    padding: 10px;
-    cursor: pointer;
-    color: #fff;
-  }
-
-  #suggestions li:hover {
-    background: #222;
-  }
-
-  /* Infos en bas */
   .info {
     position: absolute;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    width: 90%;
-    max-width: 900px;
-    background: rgba(0,0,0,0.0); /* transparent */
-    padding: 20px;
-    color: #fff;
-    z-index: 10;
-  }
-
-  .info h2 {
-    font-size: 3em;
-    margin: 0 0 10px;
-  }
-
-  .info p {
-    font-size: 1.2em;
-    margin: 5px 0;
+    text-align: center;
+    color: white;
   }
 
   .info button {
     margin-top: 10px;
     padding: 12px 20px;
     background: transparent;
-    color: #fff;
-    border: 2px solid #fff;
+    border: 2px solid white;
+    color: white;
     cursor: pointer;
     font-size: 16px;
   }
-
-  #warning {
-    margin-top: 10px;
-    font-weight: bold;
-  }
-
-  /* Mobile */
-  @media (max-width: 900px) {
-    .info h2 { font-size: 2em; }
-    .info p { font-size: 1em; }
-    #search { font-size: 14px; padding: 10px; }
-  }
 </style>
 </head>
-
 <body>
-
-<!-- Background -->
-<section class="background-section" id="background"></section>
-
-<!-- Search bar -->
 <header>
-  <input type="text" id="search" placeholder="Rechercher un film…" />
+  <input type="text" id="search" placeholder="Rechercher un film...">
   <ul id="suggestions"></ul>
 </header>
 
-<!-- Infos en bas -->
-<section class="info">
+<div class="info">
   <h2 id="title"></h2>
   <p id="meta"></p>
   <p id="desc"></p>
   <button onclick="pickMovie()">Relancer</button>
-  <p id="warning"></p>
-</section>
+</div>
 
 <script>
 const GITHUB_PREFIX = "https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/";
 let movies = [];
 let relaunchCount = 0;
-const messages = ["Eh","Abuse-pas","Ehhhhh","C'EST PAS INFINI"];
+
 const searchInput = document.getElementById("search");
 const suggestionsEl = document.getElementById("suggestions");
 
-// Fetch movies
 fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/base")
   .then(res => res.json())
-  .then(data => { movies = data; pickMovie(); });
+  .then(data => {
+    movies = data;
+    pickMovie();
+  });
 
-// Pick random movie
 function pickMovie() {
-  const movie = movies[Math.floor(Math.random()*movies.length)];
+  const movie = movies[Math.floor(Math.random() * movies.length)];
   displayMovie(movie);
-  handleRelaunchCount();
 }
 
-// Pick by title
 function pickMovieByTitle(title) {
-  const movie = movies.find(m => m.title===title);
-  if(!movie) return;
+  const movie = movies.find(m => m.title === title);
+  if (!movie) return;
   displayMovie(movie);
-  handleRelaunchCount();
 }
 
-// Display movie
 function displayMovie(movie) {
   document.getElementById("title").innerText = movie.title;
   document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
   document.getElementById("desc").innerText = movie.description;
 
-  // Background image or fallback
-  const bgEl = document.getElementById("background");
+  // Background full screen
   if(movie.background_file) {
-    bgEl.style.backgroundImage = `url(${GITHUB_PREFIX + movie.background_file})`;
+    document.body.style.backgroundImage = `url(${GITHUB_PREFIX + movie.background_file})`;
   } else {
-    bgEl.style.backgroundImage = 'none';
-    bgEl.style.backgroundColor = '#000';
+    document.body.style.backgroundImage = 'none';
   }
-}
-
-// Relaunch count
-function handleRelaunchCount() {
-  relaunchCount++;
-  const step = Math.floor(relaunchCount/5)-1;
-  if(messages[step]) document.getElementById("warning").innerText = messages[step];
 }
 
 // Search dropdown
 searchInput.addEventListener("input", function() {
   const query = this.value.toLowerCase();
   suggestionsEl.innerHTML = "";
-  if(!query){ suggestionsEl.style.display='none'; return; }
-
+  if (!query) {
+    suggestionsEl.style.display = "none";
+    return;
+  }
   const matches = movies.filter(m => m.title.toLowerCase().includes(query));
-  matches.forEach(m=>{
-    const li=document.createElement("li");
-    li.textContent=m.title;
-    li.onclick=()=>{ pickMovieByTitle(m.title); suggestionsEl.style.display='none'; searchInput.value=''; };
+  matches.forEach(m => {
+    const li = document.createElement("li");
+    li.textContent = m.title;
+    li.onclick = () => {
+      pickMovieByTitle(m.title);
+      suggestionsEl.style.display = "none";
+      searchInput.value = "";
+    };
     suggestionsEl.appendChild(li);
   });
-  suggestionsEl.style.display = matches.length ? 'block' : 'none';
+  suggestionsEl.style.display = matches.length ? "block" : "none";
 });
-
-// =====================
-// CURSEUR DYNAMIQUE
-// =====================
-const OPEN_CURSOR = "url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/open.png') 16 16, auto";
-const CLOSE_CURSOR = "url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/close.png') 16 16, auto";
-document.body.style.cursor = OPEN_CURSOR;
-document.addEventListener("mousedown",()=>{ document.body.style.cursor = CLOSE_CURSOR; });
-document.addEventListener("mouseup",()=>{ document.body.style.cursor = OPEN_CURSOR; });
 </script>
-
 </body>
 </html>
