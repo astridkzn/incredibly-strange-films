@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Reco Fullscreen Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
   html, body {
     margin: 0;
@@ -19,55 +20,81 @@
     color: white;
   }
 
+  /* SEARCH BAR */
   header {
-    position: absolute;
+    position: fixed;
     top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
+    left: 20px;
+    width: 320px;
     z-index: 10;
   }
 
   #search {
     width: 100%;
-    padding: 12px;
+    padding: 12px 16px;
     font-size: 16px;
-    border: none;
+    border: 2px solid white;
+    border-radius: 999px;
     outline: none;
-    background: none; /* pas de fond */
+    background: transparent;
     color: white;
-    border-bottom: 2px solid white; /* juste un trait si tu veux */
+  }
+
+  #search::placeholder {
+    color: rgba(255,255,255,0.7);
   }
 
   #suggestions {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 8px 0 0;
     display: none;
     color: white;
   }
 
+  /* INFOS FILM */
   .info {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    color: white;
+    position: fixed;
+    bottom: 40px;
+    left: 40px;
+    max-width: 40%;
+    text-align: left;
   }
 
+  .info h2 {
+    font-size: 4em;      /* ≈ 2x plus grand */
+    font-weight: 700;    /* bold */
+    margin: 0 0 10px;
+    line-height: 1;
+  }
+
+  .info p {
+    font-size: 1.1em;
+    margin: 6px 0;
+  }
+
+  /* BOUTON RELANCER */
   .info button {
-    margin-top: 10px;
-    padding: 12px 20px;
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    padding: 14px 28px;
     background: transparent;
     border: 2px solid white;
+    border-radius: 999px;
     color: white;
     cursor: pointer;
     font-size: 16px;
   }
+
+  .info button:hover {
+    background: rgba(255,255,255,0.1);
+  }
 </style>
 </head>
+
 <body>
+
 <header>
   <input type="text" id="search" placeholder="Rechercher un film...">
   <ul id="suggestions"></ul>
@@ -83,7 +110,6 @@
 <script>
 const GITHUB_PREFIX = "https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/";
 let movies = [];
-let relaunchCount = 0;
 
 const searchInput = document.getElementById("search");
 const suggestionsEl = document.getElementById("suggestions");
@@ -108,27 +134,32 @@ function pickMovieByTitle(title) {
 
 function displayMovie(movie) {
   document.getElementById("title").innerText = movie.title;
-  document.getElementById("meta").innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
+  document.getElementById("meta").innerText =
+    `${movie.director} · ${movie.year} · ${movie.genre}`;
   document.getElementById("desc").innerText = movie.description;
-  console.log(movie)
-  // Background full screen
-  if(movie.background_file) {
-    console.log(movie.background_file);
-    document.body.style.backgroundImage = `url(${GITHUB_PREFIX + movie.background_file})`;
+
+  if (movie.background_file) {
+    document.body.style.backgroundImage =
+      `url(${GITHUB_PREFIX + movie.background_file})`;
   } else {
-    document.body.style.backgroundImage = 'none';
+    document.body.style.backgroundImage = "none";
   }
 }
 
-// Search dropdown
+/* SEARCH */
 searchInput.addEventListener("input", function() {
   const query = this.value.toLowerCase();
   suggestionsEl.innerHTML = "";
+
   if (!query) {
     suggestionsEl.style.display = "none";
     return;
   }
-  const matches = movies.filter(m => m.title.toLowerCase().includes(query));
+
+  const matches = movies.filter(m =>
+    m.title.toLowerCase().includes(query)
+  );
+
   matches.forEach(m => {
     const li = document.createElement("li");
     li.textContent = m.title;
@@ -139,8 +170,10 @@ searchInput.addEventListener("input", function() {
     };
     suggestionsEl.appendChild(li);
   });
+
   suggestionsEl.style.display = matches.length ? "block" : "none";
 });
 </script>
+
 </body>
 </html>
