@@ -48,7 +48,7 @@
     top: 20px;
     left: 20px;
     width: 320px;
-    z-index: 10;
+    z-index: 20;
   }
 
   #search {
@@ -66,12 +66,27 @@
     color: #777;
   }
 
+  /* DROPDOWN */
   #suggestions {
     list-style: none;
-    padding: 0;
+    padding: 6px 0;
     margin: 8px 0 0;
     display: none;
-    color: white;
+    background: white;
+    color: black;
+    border-radius: 12px;
+    max-height: 240px;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  }
+
+  #suggestions li {
+    padding: 10px 16px;
+    cursor: pointer;
+  }
+
+  #suggestions li:hover {
+    background: #f2f2f2;
   }
 
   /* INFOS FILM */
@@ -82,7 +97,6 @@
     max-width: 40%;
     text-align: left;
     z-index: 10;
-
     opacity: 1;
     transition: opacity 0.4s ease;
   }
@@ -92,14 +106,14 @@
   }
 
   .info h2 {
-    font-size: 4em;
+    font-size: 3.4em; /* -15% */
     font-weight: 700;
     margin: 0 0 10px;
     line-height: 1;
   }
 
   .info p {
-    font-size: 1.1em;
+    font-size: 1em; /* -10% */
     margin: 6px 0;
   }
 
@@ -125,16 +139,58 @@
 
   .actions button {
     padding: 14px 28px;
-    background: transparent;
-    border: 2px solid white;
     border-radius: 999px;
-    color: white;
     cursor: pointer;
     font-size: 16px;
+    border: 2px solid white;
+    background: transparent;
+    color: white;
   }
 
   .actions button:hover {
     background: rgba(255,255,255,0.1);
+  }
+
+  /* =========================
+     MOBILE
+  ========================= */
+  @media (max-width: 768px) {
+
+    header {
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
+    }
+
+    .info {
+      left: 20px;
+      right: 20px;
+      bottom: 120px;
+      max-width: none;
+      width: auto;
+    }
+
+    .info h2 {
+      font-size: 2.4em;
+    }
+
+    .info p {
+      font-size: 0.95em;
+    }
+
+    .actions {
+      left: 50%;
+      right: auto;
+      bottom: 30px;
+      transform: translateX(-50%);
+      justify-content: center;
+    }
+
+    .actions button:last-child {
+      background: white;
+      color: black;
+      border-color: white;
+    }
   }
 </style>
 </head>
@@ -201,18 +257,14 @@ function displayMovie(movie) {
     currentMovie = movie;
     isExpanded = false;
 
-    document.getElementById("title").innerText = movie.title;
-    document.getElementById("meta").innerText =
-      `${movie.director} · ${movie.year} · ${movie.genre}`;
+    title.innerText = movie.title;
+    meta.innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
 
     updateDescription();
 
-    if (movie.background_file) {
-      document.body.style.backgroundImage =
-        `url(${GITHUB_PREFIX + movie.background_file})`;
-    } else {
-      document.body.style.backgroundImage = "none";
-    }
+    document.body.style.backgroundImage = movie.background_file
+      ? `url(${GITHUB_PREFIX + movie.background_file})`
+      : "none";
 
     if (movie.URL) {
       moreInfoBtn.style.display = "inline-block";
@@ -239,12 +291,11 @@ function updateDescription() {
   }
 }
 
-readMoreBtn.addEventListener("click", () => {
+readMoreBtn.onclick = () => {
   isExpanded = !isExpanded;
   updateDescription();
-});
+};
 
-/* SEARCH */
 searchInput.addEventListener("input", function() {
   const query = this.value.toLowerCase();
   suggestionsEl.innerHTML = "";
@@ -254,22 +305,20 @@ searchInput.addEventListener("input", function() {
     return;
   }
 
-  const matches = movies.filter(m =>
-    m.title.toLowerCase().includes(query)
-  );
+  movies
+    .filter(m => m.title.toLowerCase().includes(query))
+    .forEach(m => {
+      const li = document.createElement("li");
+      li.textContent = m.title;
+      li.onclick = () => {
+        pickMovieByTitle(m.title);
+        suggestionsEl.style.display = "none";
+        searchInput.value = "";
+      };
+      suggestionsEl.appendChild(li);
+    });
 
-  matches.forEach(m => {
-    const li = document.createElement("li");
-    li.textContent = m.title;
-    li.onclick = () => {
-      pickMovieByTitle(m.title);
-      suggestionsEl.style.display = "none";
-      searchInput.value = "";
-    };
-    suggestionsEl.appendChild(li);
-  });
-
-  suggestionsEl.style.display = matches.length ? "block" : "none";
+  suggestionsEl.style.display = suggestionsEl.children.length ? "block" : "none";
 });
 </script>
 
