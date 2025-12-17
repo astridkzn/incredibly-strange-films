@@ -20,6 +20,28 @@
     color: white;
   }
 
+  /* OVERLAYS */
+  .overlay-top,
+  .overlay-bottom {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .overlay-top {
+    top: 0;
+    height: 160px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));
+  }
+
+  .overlay-bottom {
+    bottom: 0;
+    height: 240px;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
+  }
+
   /* SEARCH BAR */
   header {
     position: fixed;
@@ -33,15 +55,15 @@
     width: 100%;
     padding: 12px 16px;
     font-size: 16px;
-    border: 2px solid white;
+    border: none;
     border-radius: 999px;
     outline: none;
-    background: transparent;
-    color: white;
+    background: white;
+    color: black;
   }
 
   #search::placeholder {
-    color: rgba(255,255,255,0.7);
+    color: #777;
   }
 
   #suggestions {
@@ -59,11 +81,19 @@
     left: 40px;
     max-width: 40%;
     text-align: left;
+    z-index: 10;
+
+    opacity: 1;
+    transition: opacity 0.4s ease;
+  }
+
+  .info.fade-out {
+    opacity: 0;
   }
 
   .info h2 {
-    font-size: 4em;      /* ≈ 2x plus grand */
-    font-weight: 700;    /* bold */
+    font-size: 4em;
+    font-weight: 700;
     margin: 0 0 10px;
     line-height: 1;
   }
@@ -73,11 +103,27 @@
     margin: 6px 0;
   }
 
-  /* BOUTON RELANCER */
-  .info button {
+  .read-more {
+    margin-top: 6px;
+    background: none;
+    border: none;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  /* BOUTONS */
+  .actions {
     position: fixed;
     bottom: 40px;
     right: 40px;
+    display: flex;
+    gap: 12px;
+    z-index: 10;
+  }
+
+  .actions button {
     padding: 14px 28px;
     background: transparent;
     border: 2px solid white;
@@ -87,7 +133,7 @@
     font-size: 16px;
   }
 
-  .info button:hover {
+  .actions button:hover {
     background: rgba(255,255,255,0.1);
   }
 </style>
@@ -95,24 +141,40 @@
 
 <body>
 
+<div class="overlay-top"></div>
+<div class="overlay-bottom"></div>
+
 <header>
   <input type="text" id="search" placeholder="Rechercher un film...">
   <ul id="suggestions"></ul>
 </header>
 
-<div class="info">
+<div class="info" id="info">
   <h2 id="title"></h2>
   <p id="meta"></p>
   <p id="desc"></p>
+  <button id="readMore" class="read-more" style="display:none;">Lire plus</button>
+</div>
+
+<div class="actions">
+  <button id="moreInfo" style="display:none;">+ d’infos</button>
   <button onclick="pickMovie()">Relancer</button>
 </div>
 
 <script>
 const GITHUB_PREFIX = "https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/";
 let movies = [];
+let currentMovie = null;
+let isExpanded = false;
 
 const searchInput = document.getElementById("search");
 const suggestionsEl = document.getElementById("suggestions");
+const moreInfoBtn = document.getElementById("moreInfo");
+const infoEl = document.getElementById("info");
+const descEl = document.getElementById("desc");
+const readMoreBtn = document.getElementById("readMore");
+
+const MAX_LENGTH = 300;
 
 fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/base")
   .then(res => res.json())
@@ -133,18 +195,54 @@ function pickMovieByTitle(title) {
 }
 
 function displayMovie(movie) {
-  document.getElementById("title").innerText = movie.title;
-  document.getElementById("meta").innerText =
-    `${movie.director} · ${movie.year} · ${movie.genre}`;
-  document.getElementById("desc").innerText = movie.description;
+  infoEl.classList.add("fade-out");
 
-  if (movie.background_file) {
-    document.body.style.backgroundImage =
-      `url(${GITHUB_PREFIX + movie.background_file})`;
+  setTimeout(() => {
+    currentMovie = movie;
+    isExpanded = false;
+
+    document.getElementById("title").innerText = movie.title;
+    document.getElementById("meta").innerText =
+      `${movie.director} · ${movie.year} · ${movie.genre}`;
+
+    updateDescription();
+
+    if (movie.background_file) {
+      document.body.style.backgroundImage =
+        `url(${GITHUB_PREFIX + movie.background_file})`;
+    } else {
+      document.body.style.backgroundImage = "none";
+    }
+
+    if (movie.URL) {
+      moreInfoBtn.style.display = "inline-block";
+      moreInfoBtn.onclick = () => window.open(movie.URL, "_blank");
+    } else {
+      moreInfoBtn.style.display = "none";
+    }
+
+    infoEl.classList.remove("fade-out");
+  }, 400);
+}
+
+function updateDescription() {
+  const text = currentMovie.description || "";
+
+  if (text.length > MAX_LENGTH && !isExpanded) {
+    descEl.innerText = text.slice(0, MAX_LENGTH) + "…";
+    readMoreBtn.style.display = "inline-block";
+    readMoreBtn.innerText = "Lire plus";
   } else {
-    document.body.style.backgroundImage = "none";
+    descEl.innerText = text;
+    readMoreBtn.innerText = "Lire moins";
+    readMoreBtn.style.display = text.length > MAX_LENGTH ? "inline-block" : "none";
   }
 }
+
+readMoreBtn.addEventListener("click", () => {
+  isExpanded = !isExpanded;
+  updateDescription();
+});
 
 /* SEARCH */
 searchInput.addEventListener("input", function() {
