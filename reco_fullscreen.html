@@ -25,7 +25,6 @@
     color: white;
   }
 
-  /* SAFE AREAS */
   :root {
     --safe-bottom: env(safe-area-inset-bottom);
     --safe-top: env(safe-area-inset-top);
@@ -44,13 +43,13 @@
   .overlay-top {
     top: 0;
     height: 180px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0));
+    background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0));
   }
 
   .overlay-bottom {
     bottom: 0;
-    height: 320px; /* étendu vers le haut */
-    background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
+    height: 320px;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
   }
 
   /* SEARCH BAR */
@@ -96,7 +95,14 @@
     border-radius: 12px;
     max-height: 240px;
     overflow-y: auto;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  }
+
+  #suggestions::-webkit-scrollbar {
+    display: none;
   }
 
   #suggestions li {
@@ -114,17 +120,16 @@
     bottom: calc(40px + var(--safe-bottom));
     left: 40px;
     max-width: 40%;
-    text-align: left;
     z-index: 10;
     opacity: 1;
     transition: opacity 0.4s ease;
 
-    /* glassmorphism discret */
-    background: rgba(0,0,0,0.25);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    padding: 20px;
-    border-radius: 20px;
+    background: rgba(0,0,0,0.15);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+
+    padding: 18px;
+    border-radius: 18px;
   }
 
   .info.fade-out {
@@ -157,7 +162,7 @@
     padding: 0;
   }
 
-  /* BOUTONS */
+  /* ACTIONS */
   .actions {
     position: fixed;
     bottom: calc(40px + var(--safe-bottom));
@@ -183,21 +188,20 @@
     border-color: white;
   }
 
-  /* =========================
-     MOBILE
-  ========================= */
+  /* MOBILE */
   @media (max-width: 768px) {
 
     header {
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 40px);
+      left: 0;
+      right: 0;
+      padding: 0 20px;
+      width: 100%;
     }
 
     .info {
       left: 20px;
       right: 20px;
-      bottom: calc(140px + var(--safe-bottom));
+      bottom: calc(110px + var(--safe-bottom));
       max-width: none;
     }
 
@@ -257,6 +261,15 @@ const metaEl = document.getElementById("meta");
 
 const MAX_LENGTH = 300;
 
+/* PRELOAD BACKGROUND */
+function setBackground(url) {
+  const img = new Image();
+  img.onload = () => {
+    document.body.style.backgroundImage = `url(${url})`;
+  };
+  img.src = url;
+}
+
 fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/base")
   .then(res => res.json())
   .then(data => {
@@ -288,9 +301,9 @@ function displayMovie(movie) {
 
     updateDescription();
 
-    document.body.style.backgroundImage = movie.background_file
-      ? `url(${GITHUB_PREFIX + movie.background_file})`
-      : "none";
+    if (movie.background_file) {
+      setBackground(GITHUB_PREFIX + movie.background_file);
+    }
 
     if (movie.URL) {
       moreInfoBtn.style.display = "inline-block";
