@@ -5,12 +5,17 @@
 <title>Reco Fullscreen Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<!-- Google Font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
   html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
 
   body {
@@ -18,6 +23,12 @@
     background-position: center;
     background-repeat: no-repeat;
     color: white;
+  }
+
+  /* SAFE AREAS */
+  :root {
+    --safe-bottom: env(safe-area-inset-bottom);
+    --safe-top: env(safe-area-inset-top);
   }
 
   /* OVERLAYS */
@@ -32,22 +43,23 @@
 
   .overlay-top {
     top: 0;
-    height: 160px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));
+    height: 180px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0));
   }
 
   .overlay-bottom {
     bottom: 0;
-    height: 240px;
-    background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
+    height: 320px; /* étendu vers le haut */
+    background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
   }
 
   /* SEARCH BAR */
   header {
     position: fixed;
-    top: 20px;
+    top: calc(20px + var(--safe-top));
     left: 20px;
-    width: 320px;
+    width: 280px;
+    max-width: calc(100% - 40px);
     z-index: 20;
   }
 
@@ -55,15 +67,22 @@
     width: 100%;
     padding: 12px 16px;
     font-size: 16px;
-    border: none;
+    border: 1px solid rgba(255,255,255,0.6);
     border-radius: 999px;
     outline: none;
+    background: transparent;
+    color: white;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  #search:focus,
+  #search:not(:placeholder-shown) {
     background: white;
     color: black;
   }
 
   #search::placeholder {
-    color: #777;
+    color: rgba(255,255,255,0.7);
   }
 
   /* DROPDOWN */
@@ -92,13 +111,20 @@
   /* INFOS FILM */
   .info {
     position: fixed;
-    bottom: 40px;
+    bottom: calc(40px + var(--safe-bottom));
     left: 40px;
     max-width: 40%;
     text-align: left;
     z-index: 10;
     opacity: 1;
     transition: opacity 0.4s ease;
+
+    /* glassmorphism discret */
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: 20px;
+    border-radius: 20px;
   }
 
   .info.fade-out {
@@ -106,15 +132,19 @@
   }
 
   .info h2 {
-    font-size: 3.4em; /* -15% */
+    font-size: 3.4em;
     font-weight: 700;
     margin: 0 0 10px;
     line-height: 1;
   }
 
   .info p {
-    font-size: 1em; /* -10% */
+    font-size: 1em;
     margin: 6px 0;
+  }
+
+  .meta strong {
+    font-weight: 700;
   }
 
   .read-more {
@@ -130,7 +160,7 @@
   /* BOUTONS */
   .actions {
     position: fixed;
-    bottom: 40px;
+    bottom: calc(40px + var(--safe-bottom));
     right: 40px;
     display: flex;
     gap: 12px;
@@ -147,8 +177,10 @@
     color: white;
   }
 
-  .actions button:hover {
-    background: rgba(255,255,255,0.1);
+  .actions button:last-child {
+    background: white;
+    color: black;
+    border-color: white;
   }
 
   /* =========================
@@ -165,13 +197,12 @@
     .info {
       left: 20px;
       right: 20px;
-      bottom: 120px;
+      bottom: calc(140px + var(--safe-bottom));
       max-width: none;
-      width: auto;
     }
 
     .info h2 {
-      font-size: 2.4em;
+      font-size: 2.3em;
     }
 
     .info p {
@@ -181,15 +212,8 @@
     .actions {
       left: 50%;
       right: auto;
-      bottom: 30px;
       transform: translateX(-50%);
       justify-content: center;
-    }
-
-    .actions button:last-child {
-      background: white;
-      color: black;
-      border-color: white;
     }
   }
 </style>
@@ -207,7 +231,7 @@
 
 <div class="info" id="info">
   <h2 id="title"></h2>
-  <p id="meta"></p>
+  <p id="meta" class="meta"></p>
   <p id="desc"></p>
   <button id="readMore" class="read-more" style="display:none;">Lire plus</button>
 </div>
@@ -229,6 +253,7 @@ const moreInfoBtn = document.getElementById("moreInfo");
 const infoEl = document.getElementById("info");
 const descEl = document.getElementById("desc");
 const readMoreBtn = document.getElementById("readMore");
+const metaEl = document.getElementById("meta");
 
 const MAX_LENGTH = 300;
 
@@ -258,7 +283,8 @@ function displayMovie(movie) {
     isExpanded = false;
 
     title.innerText = movie.title;
-    meta.innerText = `${movie.director} · ${movie.year} · ${movie.genre}`;
+    metaEl.innerHTML =
+      `<strong>${movie.director}</strong> · <strong>${movie.year}</strong> · ${movie.genre}`;
 
     updateDescription();
 
