@@ -2,38 +2,31 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Reco Fullscreen</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reco Fullscreen</title>
 
-<!-- Google Font -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-/* RESET */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: 'Inter', sans-serif;
+  font-family: Inter, sans-serif;
 }
 
-/* SAFE AREAS */
-:root {
-  --safe-top: env(safe-area-inset-top);
-  --safe-bottom: env(safe-area-inset-bottom);
-}
-
-/* BODY / BACKGROUND */
-body {
+/* BACKGROUND LAYERS */
+.bg,
+.bg-next {
+  position: fixed;
+  inset: 0;
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
-  color: white;
-  opacity: 1;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.8s ease;
 }
+
+.bg { z-index: -2; }
+.bg-next { z-index: -1; opacity: 0; }
 
 /* OVERLAYS */
 .overlay-top,
@@ -42,41 +35,37 @@ body {
   left: 0;
   width: 100%;
   pointer-events: none;
-  z-index: 5;
+  z-index: 2;
 }
 
 .overlay-top {
   top: 0;
   height: 180px;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0));
+  background: linear-gradient(to bottom, rgba(0,0,0,.55), transparent);
 }
 
 .overlay-bottom {
   bottom: 0;
   height: 320px;
-  background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
+  background: linear-gradient(to top, rgba(0,0,0,.7), transparent);
 }
 
 /* SEARCH */
 header {
   position: fixed;
-  top: calc(20px + var(--safe-top));
+  top: 20px;
   left: 40px;
   width: 280px;
-  max-width: calc(100% - 80px);
-  z-index: 20;
+  z-index: 5;
 }
 
 #search {
   width: 100%;
   padding: 12px 16px;
-  font-size: 16px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.6);
+  border: 1px solid rgba(255,255,255,.6);
   background: transparent;
   color: white;
-  outline: none;
-  transition: background 0.2s ease, color 0.2s ease;
 }
 
 #search:focus,
@@ -85,91 +74,46 @@ header {
   color: black;
 }
 
-#search::placeholder {
-  color: rgba(255,255,255,0.7);
-}
-
-/* DROPDOWN */
-#suggestions {
-  list-style: none;
-  margin: 8px 0 0;
-  padding: 6px 0;
-  display: none;
-  background: white;
-  color: black;
-  border-radius: 12px;
-  max-height: 240px;
-  overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-}
-
-#suggestions li {
-  padding: 10px 16px;
-  cursor: pointer;
-}
-
-#suggestions li:hover {
-  background: #f2f2f2;
-}
-
-/* INFO FILM */
+/* INFO CARD */
 .info {
   position: fixed;
-  bottom: calc(40px + var(--safe-bottom));
+  bottom: 40px;
   left: 40px;
   max-width: 40%;
-  z-index: 10;
-  background: rgba(0,0,0,0.15);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
   padding: 18px;
   border-radius: 18px;
-  opacity: 1;
-  transition: opacity 0.4s ease;
+  background: rgba(0,0,0,.18);
+  backdrop-filter: blur(6px);
+  color: white;
+  transition: opacity .4s ease;
 }
 
-.info.fade-out {
-  opacity: 0;
-}
+.info.fade { opacity: 0; }
 
 .info h2 {
-  font-size: 3.4em;
+  font-size: 3em;
   margin: 0 0 10px;
-  line-height: 1;
-}
-
-.info p {
-  font-size: 1em;
-  margin: 6px 0;
-}
-
-.read-more {
-  background: none;
-  border: none;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0;
 }
 
 /* ACTIONS */
 .actions {
   position: fixed;
-  bottom: calc(40px + var(--safe-bottom));
-  right: 40px;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   gap: 12px;
-  z-index: 10;
+  align-items: center;
 }
 
 .actions button {
-  padding: 14px 28px;
+  height: 52px;
+  padding: 0 28px;
   border-radius: 999px;
+  font-size: 16px;
   border: 2px solid white;
   background: transparent;
   color: white;
-  font-size: 16px;
-  cursor: pointer;
 }
 
 .actions button:last-child {
@@ -177,41 +121,40 @@ header {
   color: black;
 }
 
+/* BUBBLE */
+.bubble {
+  position: absolute;
+  bottom: 64px;
+  background: white;
+  color: black;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .2s ease, transform .2s ease;
+  pointer-events: none;
+}
+
+.bubble.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* MOBILE */
 @media (max-width: 768px) {
-
   header {
     left: 0;
     right: 0;
-    padding: 0 24px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
-  #search,
-  #suggestions {
-    max-width: 320px;
-  }
-
-  #search {
-    padding: 14px 18px;
+    margin: auto;
+    width: 320px;
   }
 
   .info {
     left: 20px;
     right: 20px;
-    bottom: calc(110px + var(--safe-bottom));
     max-width: none;
-  }
-
-  .info h2 {
-    font-size: 2.3em;
-  }
-
-  .actions {
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 110px;
   }
 }
 </style>
@@ -219,155 +162,75 @@ header {
 
 <body>
 
+<div class="bg" id="bg"></div>
+<div class="bg-next" id="bgNext"></div>
+
 <div class="overlay-top"></div>
 <div class="overlay-bottom"></div>
 
 <header>
-  <input id="search" type="text" placeholder="Rechercher un film…" />
-  <ul id="suggestions"></ul>
+  <input id="search" placeholder="Rechercher un film…" />
 </header>
 
 <div class="info" id="info">
   <h2 id="title"></h2>
   <p id="meta"></p>
   <p id="desc"></p>
-  <button id="readMore" class="read-more" style="display:none;">Lire plus</button>
 </div>
 
 <div class="actions">
-  <button id="moreInfo" style="display:none;">+ d’infos</button>
-  <button onclick="pickMovie()">Relancer</button>
+  <button id="more">+ d’infos</button>
+  <button id="reroll">Relancer</button>
+  <div class="bubble" id="bubble"></div>
 </div>
 
 <script>
-const GITHUB_PREFIX = "https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/";
-let movies = [];
-let currentMovie = null;
-let isExpanded = false;
+const bg = document.getElementById("bg");
+const bgNext = document.getElementById("bgNext");
+const info = document.getElementById("info");
+const rerollBtn = document.getElementById("reroll");
+const bubble = document.getElementById("bubble");
 
-const searchInput = document.getElementById("search");
-const suggestionsEl = document.getElementById("suggestions");
-const infoEl = document.getElementById("info");
-const descEl = document.getElementById("desc");
-const readMoreBtn = document.getElementById("readMore");
-const metaEl = document.getElementById("meta");
-const titleEl = document.getElementById("title");
-const moreInfoBtn = document.getElementById("moreInfo");
+let clickCount = 0;
 
-const MAX_LENGTH = 300;
+const messages = [
+  { text: "Eh", duration: 1000 },
+  { text: "Eh !", duration: 1500 },
+  { text: "C'est bon non ?", duration: 1500 },
+  { text: "Décide-toi non ?", duration: 2000 },
+  { text: "OHHHHHHHH", duration: 1000 },
+  { text: "C'EST PAS INFINI", duration: 2000 }
+];
 
-/* BACKGROUND FADE */
+function showBubble(text, duration) {
+  bubble.textContent = text;
+  bubble.classList.add("show");
+  setTimeout(() => bubble.classList.remove("show"), duration);
+}
+
 function setBackground(url) {
-  const img = new Image();
-  img.onload = () => {
-    document.body.style.opacity = 0;
-    setTimeout(() => {
-      document.body.style.backgroundImage = `url(${url})`;
-      document.body.style.opacity = 1;
-    }, 200);
-  };
-  img.src = url;
-}
-
-/* FETCH DATA */
-fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/base")
-  .then(res => res.json())
-  .then(data => {
-    movies = data;
-    pickMovie();
-  });
-
-function pickMovie() {
-  const movie = movies[Math.floor(Math.random() * movies.length)];
-  displayMovie(movie);
-}
-
-function pickMovieByTitle(title) {
-  const movie = movies.find(m => m.title === title);
-  if (movie) displayMovie(movie);
-}
-
-function displayMovie(movie) {
-  infoEl.classList.add("fade-out");
+  bgNext.style.backgroundImage = `url(${url})`;
+  bgNext.style.opacity = 1;
+  bg.style.opacity = 0;
 
   setTimeout(() => {
-    currentMovie = movie;
-    isExpanded = false;
-
-    titleEl.innerText = movie.title;
-    metaEl.innerHTML = `<strong>${movie.director}</strong> · <strong>${movie.year}</strong> · ${movie.genre}`;
-
-    updateDescription();
-
-    if (movie.background_file) {
-      setBackground(GITHUB_PREFIX + movie.background_file);
-    }
-
-    if (movie.URL) {
-      moreInfoBtn.style.display = "inline-block";
-      moreInfoBtn.onclick = () => window.open(movie.URL, "_blank");
-    } else {
-      moreInfoBtn.style.display = "none";
-    }
-
-    infoEl.classList.remove("fade-out");
-  }, 400);
+    bg.style.backgroundImage = bgNext.style.backgroundImage;
+    bg.style.opacity = 1;
+    bgNext.style.opacity = 0;
+  }, 800);
 }
 
-function updateDescription() {
-  const text = currentMovie.description || "";
+rerollBtn.onclick = () => {
+  clickCount++;
 
-  if (text.length > MAX_LENGTH && !isExpanded) {
-    descEl.innerText = text.slice(0, MAX_LENGTH) + "…";
-    readMoreBtn.style.display = "inline-block";
-    readMoreBtn.innerText = "Lire plus";
-  } else {
-    descEl.innerText = text;
-    readMoreBtn.innerText = "Lire moins";
-    readMoreBtn.style.display = text.length > MAX_LENGTH ? "inline-block" : "none";
+  if (clickCount % 5 === 0 && clickCount / 5 <= messages.length) {
+    const msg = messages[clickCount / 5 - 1];
+    showBubble(msg.text, msg.duration);
   }
-}
 
-readMoreBtn.onclick = () => {
-  isExpanded = !isExpanded;
-  updateDescription();
+  // simulate bg change
+  setBackground("https://picsum.photos/1200/1800?random=" + clickCount);
 };
-
-/* SEARCH */
-searchInput.addEventListener("input", () => {
-  const query = searchInput.value.toLowerCase();
-  suggestionsEl.innerHTML = "";
-
-  if (!query) {
-    suggestionsEl.style.display = "none";
-    return;
-  }
-
-  movies
-    .filter(m => m.title.toLowerCase().includes(query))
-    .forEach(m => {
-      const li = document.createElement("li");
-      li.textContent = m.title;
-      li.onclick = () => {
-        pickMovieByTitle(m.title);
-        suggestionsEl.style.display = "none";
-        searchInput.blur();
-      };
-      suggestionsEl.appendChild(li);
-    });
-
-  suggestionsEl.style.display = suggestionsEl.children.length ? "block" : "none";
-});
-
-/* CLICK OUTSIDE */
-document.addEventListener("click", () => {
-  suggestionsEl.style.display = "none";
-  searchInput.blur();
-});
-
-document.querySelector("header").addEventListener("click", e => {
-  e.stopPropagation();
-});
 </script>
 
 </body>
