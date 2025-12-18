@@ -59,10 +59,12 @@ body {
 header {
   position: fixed;
   top: calc(20px + var(--safe-top));
-  width: 280px;
-  max-width: calc(100% - 40px);
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  padding: 0 20px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
   z-index: 20;
   box-sizing: border-box;
 }
@@ -188,10 +190,12 @@ header {
 /* MOBILE */
 @media (max-width: 768px) {
   header {
-    width: 280px;
-    max-width: calc(100% - 40px);
-    left: 50%;
-    transform: translateX(-50%);
+    max-width: 100%;
+    width: auto;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    padding: 0 20px;
   }
 
   .info {
@@ -248,8 +252,7 @@ const metaEl = document.getElementById("meta");
 const titleEl = document.getElementById("title");
 const moreInfoBtn = document.getElementById("moreInfo");
 
-const MAX_LENGTH = 300;
-
+/* PRELOAD BACKGROUND */
 function setBackground(url) {
   const img = new Image();
   img.onload = () => {
@@ -288,14 +291,18 @@ function displayMovie(movie) {
       moreInfoBtn.style.display = "none";
     }
 
+    if (movie.background_file) {
+      setBackground(GITHUB_PREFIX + movie.background_file);
+    }
+
     infoEl.classList.remove("fade-out");
   }, 400);
 }
 
 function updateDescription() {
   const text = currentMovie.description || "";
-  if (text.length > MAX_LENGTH && !isExpanded) {
-    descEl.innerText = text.slice(0, MAX_LENGTH) + "…";
+  if (text.length > 300 && !isExpanded) {
+    descEl.innerText = text.slice(0, 300) + "…";
     readMoreBtn.style.display = "inline-block";
   } else {
     descEl.innerText = text;
@@ -330,7 +337,7 @@ searchInput.addEventListener("input", () => {
       suggestionsEl.appendChild(li);
     });
 
-  suggestionsEl.style.display = "block";
+  suggestionsEl.style.display = suggestionsEl.children.length ? "block" : "none";
 });
 </script>
 
