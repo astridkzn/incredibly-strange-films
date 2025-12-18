@@ -5,213 +5,219 @@
 <title>Reco Fullscreen Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<!-- Google Font -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: 'Inter', sans-serif;
-}
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
 
-body {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  color: white;
-}
+  body {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    min-height: 100vh;
+  }
 
-* {
-  -webkit-tap-highlight-color: transparent;
-}
+  :root {
+    --safe-bottom: env(safe-area-inset-bottom);
+    --safe-top: env(safe-area-inset-top);
+  }
 
-:root {
-  --safe-bottom: env(safe-area-inset-bottom);
-  --safe-top: env(safe-area-inset-top);
-}
-
-/* OVERLAYS */
-.overlay-top,
-.overlay-bottom {
-  position: fixed;
-  left: 0;
-  width: 100%;
-  pointer-events: none;
-  z-index: 5;
-}
-
-.overlay-top {
-  top: 0;
-  height: 180px;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0));
-}
-
-.overlay-bottom {
-  bottom: 0;
-  height: 320px;
-  background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
-}
-
-/* SEARCH BAR */
-header {
-  position: fixed;
-  top: calc(20px + var(--safe-top));
-  left: 0;
-  right: 0;
-  padding: 0 20px;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  z-index: 20;
-  box-sizing: border-box;
-}
-
-#search {
-  width: 100%;
-  padding: 12px 16px;
-  font-size: 16px;
-  border: 1px solid rgba(255,255,255,0.6);
-  border-radius: 999px;
-  outline: none;
-  background: transparent;
-  color: white;
-}
-
-#search:focus,
-#search:not(:placeholder-shown) {
-  background: white;
-  color: black;
-}
-
-#search::placeholder {
-  color: rgba(255,255,255,0.7);
-}
-
-/* DROPDOWN */
-#suggestions {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  list-style: none;
-  padding: 6px 0;
-  margin: 8px 0 0;
-  display: none;
-  background: white;
-  color: black;
-  border-radius: 12px;
-  max-height: 240px;
-  overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-  z-index: 30;
-}
-
-#suggestions::-webkit-scrollbar {
-  display: none;
-}
-
-#suggestions li {
-  padding: 10px 16px;
-  cursor: pointer;
-}
-
-#suggestions li:hover {
-  background: #f2f2f2;
-}
-
-/* INFOS FILM */
-.info {
-  position: fixed;
-  bottom: calc(40px + var(--safe-bottom));
-  left: 40px;
-  max-width: 40%;
-  z-index: 10;
-  opacity: 1;
-  transition: opacity 0.4s ease;
-  background: rgba(0,0,0,0.15);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-  padding: 18px;
-  border-radius: 18px;
-}
-
-.info.fade-out {
-  opacity: 0;
-}
-
-.info h2 {
-  font-size: 2.9em; /* -15% */
-  font-weight: 700;
-  margin: 0 0 10px;
-  line-height: 1;
-}
-
-.info p {
-  font-size: 0.95em; /* -5% */
-  margin: 6px 0;
-}
-
-.read-more {
-  background: none;
-  border: none;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* ACTIONS */
-.actions {
-  position: fixed;
-  bottom: calc(40px + var(--safe-bottom));
-  right: 40px;
-  display: flex;
-  gap: 12px;
-  z-index: 10;
-}
-
-.actions button {
-  padding: 14px 28px;
-  border-radius: 999px;
-  font-size: 16px;
-  border: 2px solid white;
-  background: transparent;
-  color: white;
-  outline: none;
-}
-
-.actions button:last-child {
-  background: white;
-  color: black;
-}
-
-/* MOBILE */
-@media (max-width: 768px) {
-  header {
-    max-width: 100%;
-    width: auto;
+  /* OVERLAYS */
+  .overlay-top,
+  .overlay-bottom {
+    position: fixed;
     left: 0;
-    right: 0;
-    margin: 0 auto;
-    padding: 0 20px;
+    width: 100%;
+    pointer-events: none;
+    z-index: 5;
   }
 
+  .overlay-top {
+    top: 0;
+    height: 180px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0));
+  }
+
+  .overlay-bottom {
+    bottom: 0;
+    height: 320px;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
+  }
+
+  /* SEARCH BAR */
+  header {
+    position: fixed;
+    top: calc(20px + var(--safe-top));
+    left: 20px; /* toujours à gauche */
+    width: 280px;
+    max-width: calc(100% - 40px);
+    z-index: 20;
+  }
+
+  #search {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 16px;
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 999px;
+    outline: none;
+    background: transparent;
+    color: white;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  #search:focus,
+  #search:not(:placeholder-shown) {
+    background: white;
+    color: black;
+  }
+
+  #search::placeholder {
+    color: rgba(255,255,255,0.7);
+  }
+
+  /* DROPDOWN */
+  #suggestions {
+    list-style: none;
+    padding: 6px 0;
+    margin: 8px 0 0;
+    display: none;
+    background: white;
+    color: black;
+    border-radius: 12px;
+    max-height: 240px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  }
+
+  #suggestions::-webkit-scrollbar {
+    display: none;
+  }
+
+  #suggestions li {
+    padding: 10px 16px;
+    cursor: pointer;
+  }
+
+  #suggestions li:hover {
+    background: #f2f2f2;
+  }
+
+  /* INFOS FILM */
   .info {
-    left: 20px;
-    right: 20px;
+    position: fixed;
     bottom: calc(140px + var(--safe-bottom));
-    max-width: none;
+    left: 40px;
+    max-width: 40%;
+    z-index: 10;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+    background: rgba(0,0,0,0.15);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    padding: 18px;
+    border-radius: 18px;
   }
 
-  .actions {
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-    justify-content: center;
+  .info.fade-out {
+    opacity: 0;
   }
-}
+
+  .info h2 {
+    font-size: 2.9em; /* -15% */
+    font-weight: 700;
+    margin: 0 0 10px;
+    line-height: 1;
+  }
+
+  .info p {
+    font-size: 0.95em; /* -5% */
+    margin: 6px 0;
+  }
+
+  .meta strong {
+    font-weight: 700;
+  }
+
+  .read-more {
+    margin-top: 6px;
+    background: none;
+    border: none;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  /* ACTIONS */
+  .actions {
+    position: fixed;
+    bottom: calc(40px + var(--safe-bottom));
+    right: 40px;
+    display: flex;
+    gap: 12px;
+    z-index: 10;
+  }
+
+  .actions button {
+    padding: 14px 28px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 16px;
+    border: 2px solid white;
+    background: transparent;
+    color: white;
+    -webkit-tap-highlight-color: transparent; /* supprimer flash mobile */
+  }
+
+  .actions button:last-child {
+    background: white;
+    color: black;
+    border-color: white;
+  }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    header {
+      left: 20px; /* toujours à gauche */
+      width: calc(100% - 40px);
+      padding: 0;
+    }
+
+    .info {
+      left: 20px;
+      right: 20px;
+      bottom: calc(180px + var(--safe-bottom));
+      max-width: none;
+    }
+
+    .info h2 {
+      font-size: 2.3em;
+    }
+
+    .info p {
+      font-size: 0.95em;
+    }
+
+    .actions {
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+      justify-content: center;
+    }
+  }
 </style>
 </head>
 
@@ -234,7 +240,7 @@ header {
 
 <div class="actions">
   <button id="moreInfo" style="display:none;">+ d’infos</button>
-  <button onclick="pickMovie()">Relancer</button>
+  <button id="reloadBtn" onclick="pickMovie()">Relancer</button>
 </div>
 
 <script>
@@ -245,12 +251,12 @@ let isExpanded = false;
 
 const searchInput = document.getElementById("search");
 const suggestionsEl = document.getElementById("suggestions");
+const moreInfoBtn = document.getElementById("moreInfo");
 const infoEl = document.getElementById("info");
 const descEl = document.getElementById("desc");
 const readMoreBtn = document.getElementById("readMore");
 const metaEl = document.getElementById("meta");
-const titleEl = document.getElementById("title");
-const moreInfoBtn = document.getElementById("moreInfo");
+const reloadBtn = document.getElementById("reloadBtn");
 
 /* PRELOAD BACKGROUND */
 function setBackground(url) {
@@ -273,6 +279,12 @@ function pickMovie() {
   displayMovie(movie);
 }
 
+function pickMovieByTitle(title) {
+  const movie = movies.find(m => m.title === title);
+  if (!movie) return;
+  displayMovie(movie);
+}
+
 function displayMovie(movie) {
   infoEl.classList.add("fade-out");
 
@@ -280,9 +292,15 @@ function displayMovie(movie) {
     currentMovie = movie;
     isExpanded = false;
 
-    titleEl.innerText = movie.title;
-    metaEl.innerHTML = `<strong>${movie.director}</strong> · <strong>${movie.year}</strong> · ${movie.genre}`;
+    document.getElementById("title").innerText = movie.title;
+    metaEl.innerHTML =
+      `<strong>${movie.director}</strong> · <strong>${movie.year}</strong> · ${movie.genre}`;
+
     updateDescription();
+
+    if (movie.background_file) {
+      setBackground(GITHUB_PREFIX + movie.background_file);
+    }
 
     if (movie.URL) {
       moreInfoBtn.style.display = "inline-block";
@@ -291,22 +309,21 @@ function displayMovie(movie) {
       moreInfoBtn.style.display = "none";
     }
 
-    if (movie.background_file) {
-      setBackground(GITHUB_PREFIX + movie.background_file);
-    }
-
     infoEl.classList.remove("fade-out");
   }, 400);
 }
 
 function updateDescription() {
   const text = currentMovie.description || "";
+
   if (text.length > 300 && !isExpanded) {
     descEl.innerText = text.slice(0, 300) + "…";
     readMoreBtn.style.display = "inline-block";
+    readMoreBtn.innerText = "Lire plus";
   } else {
     descEl.innerText = text;
-    readMoreBtn.style.display = "none";
+    readMoreBtn.innerText = "Lire moins";
+    readMoreBtn.style.display = text.length > 300 ? "inline-block" : "none";
   }
 }
 
@@ -315,8 +332,9 @@ readMoreBtn.onclick = () => {
   updateDescription();
 };
 
-searchInput.addEventListener("input", () => {
-  const query = searchInput.value.toLowerCase();
+/* SEARCH DROPDOWN */
+searchInput.addEventListener("input", function() {
+  const query = this.value.toLowerCase();
   suggestionsEl.innerHTML = "";
 
   if (!query) {
@@ -330,7 +348,7 @@ searchInput.addEventListener("input", () => {
       const li = document.createElement("li");
       li.textContent = m.title;
       li.onclick = () => {
-        displayMovie(m);
+        pickMovieByTitle(m.title);
         suggestionsEl.style.display = "none";
         searchInput.value = "";
       };
@@ -338,6 +356,15 @@ searchInput.addEventListener("input", () => {
     });
 
   suggestionsEl.style.display = suggestionsEl.children.length ? "block" : "none";
+});
+
+/* CLIC OUTSIDE pour fermer le dropdown */
+document.addEventListener("click", (e) => {
+  const header = document.querySelector("header");
+  if (!header.contains(e.target)) {
+    suggestionsEl.style.display = "none";
+    searchInput.blur();
+  }
 });
 </script>
 
