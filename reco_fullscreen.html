@@ -57,8 +57,8 @@
   /* SEARCH BAR */
   header {
     position: fixed;
-    top: calc(20px + var(--safe-top));
-    left: 20px; /* toujours à gauche */
+    top: 20px;
+    left: 20px;
     width: 280px;
     max-width: calc(100% - 40px);
     z-index: 20;
@@ -136,14 +136,14 @@
   }
 
   .info h2 {
-    font-size: 2.9em; /* -15% */
+    font-size: 2.9em;
     font-weight: 700;
     margin: 0 0 10px;
     line-height: 1;
   }
 
   .info p {
-    font-size: 0.95em; /* -5% */
+    font-size: 0.95em;
     margin: 6px 0;
   }
 
@@ -227,7 +227,7 @@
 <div class="overlay-bottom"></div>
 
 <header>
-  <input type="text" id="search" placeholder="Rechercher un film...">
+  <input type="text" id="search" placeholder="Rechercher...">
   <ul id="suggestions"></ul>
 </header>
 
@@ -239,7 +239,7 @@
 </div>
 
 <div class="actions">
-  <button id="moreInfo" style="display:none;">+ d’infos</button>
+  <button id="moreInfo" style="display:none;">Voir +</button>
   <button id="reloadBtn" onclick="pickMovie()">Relancer</button>
 </div>
 
