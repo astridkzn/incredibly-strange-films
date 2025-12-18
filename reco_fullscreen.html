@@ -5,221 +5,210 @@
 <title>Reco Fullscreen Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Google Font -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    font-family: 'Inter', sans-serif;
-  }
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+}
 
-  body {
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    color: white;
-  }
+body {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: white;
+}
 
-  :root {
-    --safe-bottom: env(safe-area-inset-bottom);
-    --safe-top: env(safe-area-inset-top);
-  }
+:root {
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
+}
 
-  /* OVERLAYS */
-  .overlay-top,
-  .overlay-bottom {
-    position: fixed;
-    left: 0;
-    width: 100%;
-    pointer-events: none;
-    z-index: 5;
-  }
+/* OVERLAYS */
+.overlay-top,
+.overlay-bottom {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
 
-  .overlay-top {
-    top: 0;
-    height: 180px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0));
-  }
+.overlay-top {
+  top: 0;
+  height: 180px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+}
 
-  .overlay-bottom {
-    bottom: 0;
-    height: 320px;
-    background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
-  }
+.overlay-bottom {
+  bottom: 0;
+  height: 320px;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+}
 
-  /* SEARCH BAR */
+/* SEARCH */
+header {
+  position: fixed;
+  top: calc(20px + var(--safe-top));
+  left: 40px;
+  width: 280px;
+  z-index: 20;
+}
+
+.search-wrapper {
+  position: relative;
+}
+
+#search {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.6);
+  background: transparent;
+  color: white;
+  outline: none;
+}
+
+#search:focus,
+#search:not(:placeholder-shown) {
+  background: white;
+  color: black;
+}
+
+#search::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+
+/* DROPDOWN */
+#suggestions {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 6px 0;
+  display: none;
+  background: white;
+  color: black;
+  border-radius: 12px;
+  max-height: 240px;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+#suggestions li {
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+#suggestions li:hover {
+  background: #f2f2f2;
+}
+
+/* INFO */
+.info {
+  position: fixed;
+  bottom: calc(40px + var(--safe-bottom));
+  left: 40px;
+  max-width: 40%;
+  background: rgba(0,0,0,0.15);
+  backdrop-filter: blur(3px);
+  padding: 18px;
+  border-radius: 18px;
+  transition: opacity 0.4s ease;
+}
+
+.info.fade-out {
+  opacity: 0;
+}
+
+.info h2 {
+  font-size: 3.4em;
+  margin: 0 0 10px;
+}
+
+.read-more {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* ACTIONS */
+.actions {
+  position: fixed;
+  bottom: calc(40px + var(--safe-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.actions button {
+  height: 52px;
+  padding: 0 28px;
+  border-radius: 999px;
+  border: 2px solid white;
+  background: transparent;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.actions button:last-child {
+  background: white;
+  color: black;
+}
+
+/* BUBBLE */
+.bubble {
+  position: absolute;
+  bottom: 64px;
+  background: white;
+  color: black;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.bubble.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
   header {
-    position: fixed;
-    top: calc(20px + var(--safe-top));
-    left: 20px;
-    width: 280px;
-    max-width: calc(100% - 40px);
-    z-index: 20;
-  }
-
-  #search {
+    left: 0;
+    right: 0;
     width: 100%;
-    padding: 12px 16px;
-    font-size: 16px;
-    border: 1px solid rgba(255,255,255,0.6);
-    border-radius: 999px;
-    outline: none;
-    background: transparent;
-    color: white;
-    transition: background 0.2s ease, color 0.2s ease;
-  }
-
-  #search:focus,
-  #search:not(:placeholder-shown) {
-    background: white;
-    color: black;
-  }
-
-  #search::placeholder {
-    color: rgba(255,255,255,0.7);
-  }
-
-  /* DROPDOWN */
-  #suggestions {
-    list-style: none;
-    padding: 6px 0;
-    margin: 8px 0 0;
-    display: none;
-    background: white;
-    color: black;
-    border-radius: 12px;
-    max-height: 240px;
-    overflow-y: auto;
-
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-  }
-
-  #suggestions::-webkit-scrollbar {
-    display: none;
-  }
-
-  #suggestions li {
-    padding: 10px 16px;
-    cursor: pointer;
-  }
-
-  #suggestions li:hover {
-    background: #f2f2f2;
-  }
-
-  /* INFOS FILM */
-  .info {
-    position: fixed;
-    bottom: calc(40px + var(--safe-bottom));
-    left: 40px;
-    max-width: 40%;
-    z-index: 10;
-    opacity: 1;
-    transition: opacity 0.4s ease;
-
-    background: rgba(0,0,0,0.15);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
-
-    padding: 18px;
-    border-radius: 18px;
-  }
-
-  .info.fade-out {
-    opacity: 0;
-  }
-
-  .info h2 {
-    font-size: 3.4em;
-    font-weight: 700;
-    margin: 0 0 10px;
-    line-height: 1;
-  }
-
-  .info p {
-    font-size: 1em;
-    margin: 6px 0;
-  }
-
-  .meta strong {
-    font-weight: 700;
-  }
-
-  .read-more {
-    margin-top: 6px;
-    background: none;
-    border: none;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 0;
-  }
-
-  /* ACTIONS */
-  .actions {
-    position: fixed;
-    bottom: calc(40px + var(--safe-bottom));
-    right: 40px;
     display: flex;
-    gap: 12px;
-    z-index: 10;
+    justify-content: center;
+    padding: 0 20px;
   }
 
-  .actions button {
-    padding: 14px 28px;
-    border-radius: 999px;
-    cursor: pointer;
-    font-size: 16px;
-    border: 2px solid white;
-    background: transparent;
-    color: white;
+  .search-wrapper {
+    width: 100%;
+    max-width: 320px;
   }
 
-  .actions button:last-child {
-    background: white;
-    color: black;
-    border-color: white;
+  .info {
+    left: 20px;
+    right: 20px;
+    max-width: none;
+    bottom: calc(110px + var(--safe-bottom));
   }
-
-  /* MOBILE */
-  @media (max-width: 768px) {
-
-    header {
-      left: 0;
-      right: 0;
-      padding: 0 20px;
-      width: 100%;
-    }
-
-    .info {
-      left: 20px;
-      right: 20px;
-      bottom: calc(110px + var(--safe-bottom));
-      max-width: none;
-    }
-
-    .info h2 {
-      font-size: 2.3em;
-    }
-
-    .info p {
-      font-size: 0.95em;
-    }
-
-    .actions {
-      left: 50%;
-      right: auto;
-      transform: translateX(-50%);
-      justify-content: center;
-    }
-  }
+}
 </style>
 </head>
 
@@ -229,64 +218,103 @@
 <div class="overlay-bottom"></div>
 
 <header>
-  <input type="text" id="search" placeholder="Rechercher un film...">
-  <ul id="suggestions"></ul>
+  <div class="search-wrapper">
+    <input id="search" type="text" placeholder="Rechercher un film…" />
+    <ul id="suggestions"></ul>
+  </div>
 </header>
 
 <div class="info" id="info">
   <h2 id="title"></h2>
-  <p id="meta" class="meta"></p>
+  <p id="meta"></p>
   <p id="desc"></p>
   <button id="readMore" class="read-more" style="display:none;">Lire plus</button>
 </div>
 
 <div class="actions">
   <button id="moreInfo" style="display:none;">+ d’infos</button>
-  <button onclick="pickMovie()">Relancer</button>
+  <button id="reroll">Relancer</button>
+  <div class="bubble" id="bubble"></div>
 </div>
 
 <script>
 const GITHUB_PREFIX = "https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/";
+const searchInput = document.getElementById("search");
+const suggestionsEl = document.getElementById("suggestions");
+const headerEl = document.querySelector("header");
+const infoEl = document.getElementById("info");
+const titleEl = document.getElementById("title");
+const metaEl = document.getElementById("meta");
+const descEl = document.getElementById("desc");
+const readMoreBtn = document.getElementById("readMore");
+const moreInfoBtn = document.getElementById("moreInfo");
+const rerollBtn = document.getElementById("reroll");
+const bubble = document.getElementById("bubble");
+
 let movies = [];
 let currentMovie = null;
 let isExpanded = false;
-
-const searchInput = document.getElementById("search");
-const suggestionsEl = document.getElementById("suggestions");
-const moreInfoBtn = document.getElementById("moreInfo");
-const infoEl = document.getElementById("info");
-const descEl = document.getElementById("desc");
-const readMoreBtn = document.getElementById("readMore");
-const metaEl = document.getElementById("meta");
+let rerollCount = 0;
 
 const MAX_LENGTH = 300;
 
-/* PRELOAD BACKGROUND */
-function setBackground(url) {
-  const img = new Image();
-  img.onload = () => {
-    document.body.style.backgroundImage = `url(${url})`;
-  };
-  img.src = url;
+const messages = [
+  { text: "Eh", duration: 1000 },
+  { text: "Eh !", duration: 1500 },
+  { text: "C'est bon non ?", duration: 1500 },
+  { text: "Décide-toi non ?", duration: 2000 },
+  { text: "OHHHHHHHH", duration: 1000 },
+  { text: "C'EST PAS INFINI", duration: 2000 }
+];
+
+function showBubble(msg) {
+  bubble.textContent = msg.text;
+  bubble.classList.add("show");
+  setTimeout(() => bubble.classList.remove("show"), msg.duration);
 }
 
+/* SEARCH */
+searchInput.addEventListener("input", () => {
+  const query = searchInput.value.toLowerCase();
+  suggestionsEl.innerHTML = "";
+
+  if (!query) {
+    suggestionsEl.style.display = "none";
+    return;
+  }
+
+  movies.filter(m => m.title.toLowerCase().includes(query))
+    .forEach(m => {
+      const li = document.createElement("li");
+      li.textContent = m.title;
+      li.onclick = () => {
+        displayMovie(m);
+        suggestionsEl.style.display = "none";
+        searchInput.blur();
+      };
+      suggestionsEl.appendChild(li);
+    });
+
+  suggestionsEl.style.display = suggestionsEl.children.length ? "block" : "none";
+});
+
+/* CLICK OUTSIDE SEARCH */
+document.addEventListener("click", (e) => {
+  if (!headerEl.contains(e.target)) {
+    suggestionsEl.style.display = "none";
+    searchInput.blur();
+  }
+});
+
+headerEl.addEventListener("click", e => e.stopPropagation());
+
+/* MOVIES */
 fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/base")
   .then(res => res.json())
   .then(data => {
     movies = data;
-    pickMovie();
+    displayMovie(movies[Math.floor(Math.random() * movies.length)]);
   });
-
-function pickMovie() {
-  const movie = movies[Math.floor(Math.random() * movies.length)];
-  displayMovie(movie);
-}
-
-function pickMovieByTitle(title) {
-  const movie = movies.find(m => m.title === title);
-  if (!movie) return;
-  displayMovie(movie);
-}
 
 function displayMovie(movie) {
   infoEl.classList.add("fade-out");
@@ -295,14 +323,12 @@ function displayMovie(movie) {
     currentMovie = movie;
     isExpanded = false;
 
-    title.innerText = movie.title;
-    metaEl.innerHTML =
-      `<strong>${movie.director}</strong> · <strong>${movie.year}</strong> · ${movie.genre}`;
-
+    titleEl.textContent = movie.title;
+    metaEl.innerHTML = `<strong>${movie.director}</strong> · <strong>${movie.year}</strong> · ${movie.genre}`;
     updateDescription();
 
     if (movie.background_file) {
-      setBackground(GITHUB_PREFIX + movie.background_file);
+      document.body.style.backgroundImage = `url(${GITHUB_PREFIX + movie.background_file})`;
     }
 
     if (movie.URL) {
@@ -318,15 +344,14 @@ function displayMovie(movie) {
 
 function updateDescription() {
   const text = currentMovie.description || "";
-
   if (text.length > MAX_LENGTH && !isExpanded) {
-    descEl.innerText = text.slice(0, MAX_LENGTH) + "…";
+    descEl.textContent = text.slice(0, MAX_LENGTH) + "…";
     readMoreBtn.style.display = "inline-block";
-    readMoreBtn.innerText = "Lire plus";
+    readMoreBtn.textContent = "Lire plus";
   } else {
-    descEl.innerText = text;
-    readMoreBtn.innerText = "Lire moins";
+    descEl.textContent = text;
     readMoreBtn.style.display = text.length > MAX_LENGTH ? "inline-block" : "none";
+    readMoreBtn.textContent = "Lire moins";
   }
 }
 
@@ -335,30 +360,16 @@ readMoreBtn.onclick = () => {
   updateDescription();
 };
 
-searchInput.addEventListener("input", function() {
-  const query = this.value.toLowerCase();
-  suggestionsEl.innerHTML = "";
+/* REROLL */
+rerollBtn.onclick = () => {
+  rerollCount++;
 
-  if (!query) {
-    suggestionsEl.style.display = "none";
-    return;
+  if (rerollCount % 5 === 0 && rerollCount / 5 <= messages.length) {
+    showBubble(messages[rerollCount / 5 - 1]);
   }
 
-  movies
-    .filter(m => m.title.toLowerCase().includes(query))
-    .forEach(m => {
-      const li = document.createElement("li");
-      li.textContent = m.title;
-      li.onclick = () => {
-        pickMovieByTitle(m.title);
-        suggestionsEl.style.display = "none";
-        searchInput.value = "";
-      };
-      suggestionsEl.appendChild(li);
-    });
-
-  suggestionsEl.style.display = suggestionsEl.children.length ? "block" : "none";
-});
+  displayMovie(movies[Math.floor(Math.random() * movies.length)]);
+};
 </script>
 
 </body>
