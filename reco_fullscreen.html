@@ -5,6 +5,7 @@
 <title>Reco Fullscreen Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<!-- Google Font -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -25,8 +26,8 @@ body {
 }
 
 :root {
-  --safe-top: env(safe-area-inset-top);
   --safe-bottom: env(safe-area-inset-bottom);
+  --safe-top: env(safe-area-inset-top);
 }
 
 /* OVERLAYS */
@@ -42,36 +43,35 @@ body {
 .overlay-top {
   top: 0;
   height: 180px;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0));
 }
 
 .overlay-bottom {
   bottom: 0;
   height: 320px;
-  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
 }
 
-/* SEARCH */
+/* SEARCH BAR */
 header {
   position: fixed;
   top: calc(20px + var(--safe-top));
-  left: 40px;
-  z-index: 20;
-}
-
-.search-wrapper {
+  left: 20px;
   width: 280px;
+  max-width: calc(100% - 40px);
+  z-index: 20;
 }
 
 #search {
   width: 100%;
   padding: 12px 16px;
   font-size: 16px;
-  border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 999px;
+  outline: none;
   background: transparent;
   color: white;
-  outline: none;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 #search:focus,
@@ -80,18 +80,28 @@ header {
   color: black;
 }
 
+#search::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+
 /* DROPDOWN */
 #suggestions {
   list-style: none;
-  margin: 8px 0 0;
   padding: 6px 0;
+  margin: 8px 0 0;
   display: none;
   background: white;
   color: black;
   border-radius: 12px;
   max-height: 240px;
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+#suggestions::-webkit-scrollbar {
+  display: none;
 }
 
 #suggestions li {
@@ -103,17 +113,20 @@ header {
   background: #f2f2f2;
 }
 
-/* INFO */
+/* INFOS FILM */
 .info {
   position: fixed;
   bottom: calc(40px + var(--safe-bottom));
   left: 40px;
   max-width: 40%;
+  z-index: 10;
+  opacity: 1;
+  transition: opacity 0.4s ease;
   background: rgba(0,0,0,0.15);
   backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   padding: 18px;
   border-radius: 18px;
-  transition: opacity 0.4s ease;
 }
 
 .info.fade-out {
@@ -122,7 +135,28 @@ header {
 
 .info h2 {
   font-size: 3.4em;
+  font-weight: 700;
   margin: 0 0 10px;
+  line-height: 1;
+}
+
+.info p {
+  font-size: 1em;
+  margin: 6px 0;
+}
+
+.meta strong {
+  font-weight: 700;
+}
+
+.read-more {
+  margin-top: 6px;
+  background: none;
+  border: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
 }
 
 /* ACTIONS */
@@ -132,80 +166,64 @@ header {
   right: 40px;
   display: flex;
   gap: 12px;
-  align-items: center;
   z-index: 10;
 }
 
 .actions button {
-  height: 52px;
-  padding: 0 28px;
+  padding: 14px 28px;
   border-radius: 999px;
+  cursor: pointer;
+  font-size: 16px;
   border: 2px solid white;
   background: transparent;
   color: white;
-  font-size: 16px;
-  cursor: pointer;
 }
 
-/* RELANCER = blanc comme avant */
-#reroll {
+.actions button:last-child {
   background: white;
   color: black;
   border-color: white;
 }
 
-/* REROLL WRAPPER + BUBBLE */
-.reroll-wrapper {
-  position: relative;
-}
-
-.bubble {
-  position: absolute;
-  bottom: 64px;
-  left: 50%;
-  transform: translateX(-50%) translateY(6px);
-  background: white;
-  color: black;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-weight: 600;
-  opacity: 0;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-.bubble.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
 /* MOBILE */
 @media (max-width: 768px) {
+
   header {
     left: 0;
     right: 0;
+    width: 100%;
+    padding: 0;
     display: flex;
     justify-content: center;
   }
 
-  .search-wrapper {
+  #search,
+  #suggestions {
     width: 100%;
     max-width: 320px;
-    padding: 0 20px;
+    margin: 0 20px;
+  }
+
+  .info {
+    left: 20px;
+    right: 20px;
+    bottom: calc(110px + var(--safe-bottom));
+    max-width: none;
+  }
+
+  .info h2 {
+    font-size: 2.3em;
+  }
+
+  .info p {
+    font-size: 0.95em;
   }
 
   .actions {
     left: 50%;
     right: auto;
     transform: translateX(-50%);
-  }
-
-  .info {
-    left: 20px;
-    right: 20px;
-    max-width: none;
-    bottom: calc(110px + var(--safe-bottom));
+    justify-content: center;
   }
 }
 </style>
@@ -217,33 +235,149 @@ header {
 <div class="overlay-bottom"></div>
 
 <header>
-  <div class="search-wrapper">
-    <input id="search" placeholder="Rechercher un film…" />
-    <ul id="suggestions"></ul>
-  </div>
+  <input type="text" id="search" placeholder="Rechercher un film...">
+  <ul id="suggestions"></ul>
 </header>
 
 <div class="info" id="info">
   <h2 id="title"></h2>
-  <p id="meta"></p>
+  <p id="meta" class="meta"></p>
   <p id="desc"></p>
+  <button id="readMore" class="read-more" style="display:none;">Lire plus</button>
 </div>
 
 <div class="actions">
   <button id="moreInfo" style="display:none;">+ d’infos</button>
-
-  <div class="reroll-wrapper">
-    <button id="reroll">Relancer</button>
-    <div class="bubble" id="bubble"></div>
-  </div>
+  <button onclick="pickMovie()">Relancer</button>
 </div>
 
 <script>
 const GITHUB_PREFIX = "https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/";
+let movies = [];
+let currentMovie = null;
+let isExpanded = false;
+
 const searchInput = document.getElementById("search");
 const suggestionsEl = document.getElementById("suggestions");
-const headerEl = document.querySelector("header");
-const titleEl = document.getElementById("title");
-const metaEl = document.getElementById("meta");
+const moreInfoBtn = document.getElementById("moreInfo");
+const infoEl = document.getElementById("info");
 const descEl = document.getElementById("desc");
-const inf
+const readMoreBtn = document.getElementById("readMore");
+const metaEl = document.getElementById("meta");
+const titleEl = document.getElementById("title");
+
+const MAX_LENGTH = 300;
+
+/* BACKGROUND */
+function setBackground(url) {
+  const img = new Image();
+  img.onload = () => {
+    document.body.style.backgroundImage = `url(${url})`;
+  };
+  img.src = url;
+}
+
+fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/base")
+  .then(res => res.json())
+  .then(data => {
+    movies = data;
+    pickMovie();
+  });
+
+function pickMovie() {
+  const movie = movies[Math.floor(Math.random() * movies.length)];
+  displayMovie(movie);
+}
+
+function pickMovieByTitle(title) {
+  const movie = movies.find(m => m.title === title);
+  if (!movie) return;
+  displayMovie(movie);
+}
+
+function displayMovie(movie) {
+  infoEl.classList.add("fade-out");
+
+  setTimeout(() => {
+    currentMovie = movie;
+    isExpanded = false;
+
+    titleEl.innerText = movie.title;
+    metaEl.innerHTML =
+      `<strong>${movie.director}</strong> · <strong>${movie.year}</strong> · ${movie.genre}`;
+
+    updateDescription();
+
+    if (movie.background_file) {
+      setBackground(GITHUB_PREFIX + movie.background_file);
+    }
+
+    if (movie.URL) {
+      moreInfoBtn.style.display = "inline-block";
+      moreInfoBtn.onclick = () => window.open(movie.URL, "_blank");
+    } else {
+      moreInfoBtn.style.display = "none";
+    }
+
+    infoEl.classList.remove("fade-out");
+  }, 400);
+}
+
+function updateDescription() {
+  const text = currentMovie.description || "";
+
+  if (text.length > MAX_LENGTH && !isExpanded) {
+    descEl.innerText = text.slice(0, MAX_LENGTH) + "…";
+    readMoreBtn.style.display = "inline-block";
+    readMoreBtn.innerText = "Lire plus";
+  } else {
+    descEl.innerText = text;
+    readMoreBtn.innerText = "Lire moins";
+    readMoreBtn.style.display = text.length > MAX_LENGTH ? "inline-block" : "none";
+  }
+}
+
+readMoreBtn.onclick = () => {
+  isExpanded = !isExpanded;
+  updateDescription();
+};
+
+searchInput.addEventListener("input", function () {
+  const query = this.value.toLowerCase();
+  suggestionsEl.innerHTML = "";
+
+  if (!query) {
+    suggestionsEl.style.display = "none";
+    return;
+  }
+
+  movies
+    .filter(m => m.title.toLowerCase().includes(query))
+    .forEach(m => {
+      const li = document.createElement("li");
+      li.textContent = m.title;
+      li.onclick = () => {
+        pickMovieByTitle(m.title);
+        suggestionsEl.style.display = "none";
+        searchInput.value = "";
+      };
+      suggestionsEl.appendChild(li);
+    });
+
+  suggestionsEl.style.display = suggestionsEl.children.length ? "block" : "none";
+});
+
+/* CLICK OUTSIDE SEARCH */
+document.addEventListener("click", (e) => {
+  if (
+    !searchInput.contains(e.target) &&
+    !suggestionsEl.contains(e.target)
+  ) {
+    suggestionsEl.style.display = "none";
+    searchInput.blur();
+  }
+});
+</script>
+
+</body>
+</html>
