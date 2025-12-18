@@ -24,7 +24,6 @@ body {
   color: white;
 }
 
-/* Remove mobile tap highlight */
 * {
   -webkit-tap-highlight-color: transparent;
 }
@@ -60,14 +59,11 @@ body {
 header {
   position: fixed;
   top: calc(20px + var(--safe-top));
-  left: 20px;
   width: 280px;
   max-width: calc(100% - 40px);
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 20;
-}
-
-/* important: prevent resize */
-header {
   box-sizing: border-box;
 }
 
@@ -94,22 +90,19 @@ header {
 
 /* DROPDOWN */
 #suggestions {
-  position: absolute;          /* 🔑 key fix */
+  position: absolute;
   top: 100%;
   left: 0;
   right: 0;
-
   list-style: none;
   padding: 6px 0;
   margin: 8px 0 0;
   display: none;
-
   background: white;
   color: black;
   border-radius: 12px;
   max-height: 240px;
   overflow-y: auto;
-
   box-shadow: 0 10px 30px rgba(0,0,0,0.25);
   z-index: 30;
 }
@@ -136,11 +129,9 @@ header {
   z-index: 10;
   opacity: 1;
   transition: opacity 0.4s ease;
-
   background: rgba(0,0,0,0.15);
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
-
   padding: 18px;
   border-radius: 18px;
 }
@@ -150,14 +141,14 @@ header {
 }
 
 .info h2 {
-  font-size: 3.4em;
+  font-size: 2.9em; /* -15% */
   font-weight: 700;
   margin: 0 0 10px;
   line-height: 1;
 }
 
 .info p {
-  font-size: 1em;
+  font-size: 0.95em; /* -5% */
   margin: 6px 0;
 }
 
@@ -196,18 +187,17 @@ header {
 
 /* MOBILE */
 @media (max-width: 768px) {
-
   header {
+    width: 280px;
+    max-width: calc(100% - 40px);
     left: 50%;
     transform: translateX(-50%);
-    width: calc(100% - 40px);
-    max-width: 320px;
   }
 
   .info {
     left: 20px;
     right: 20px;
-    bottom: calc(140px + var(--safe-bottom)); /* 🔼 lifted */
+    bottom: calc(140px + var(--safe-bottom));
     max-width: none;
   }
 
@@ -233,7 +223,7 @@ header {
 
 <div class="info" id="info">
   <h2 id="title"></h2>
-  <p id="meta"></p>
+  <p id="meta" class="meta"></p>
   <p id="desc"></p>
   <button id="readMore" class="read-more" style="display:none;">Lire plus</button>
 </div>
@@ -291,8 +281,11 @@ function displayMovie(movie) {
     metaEl.innerHTML = `<strong>${movie.director}</strong> · <strong>${movie.year}</strong> · ${movie.genre}`;
     updateDescription();
 
-    if (movie.background_file) {
-      setBackground(GITHUB_PREFIX + movie.background_file);
+    if (movie.URL) {
+      moreInfoBtn.style.display = "inline-block";
+      moreInfoBtn.onclick = () => window.open(movie.URL, "_blank");
+    } else {
+      moreInfoBtn.style.display = "none";
     }
 
     infoEl.classList.remove("fade-out");
