@@ -359,6 +359,16 @@ searchInput.addEventListener("input", function() {
 
   suggestionsEl.style.display = suggestionsEl.children.length ? "block" : "none";
 });
+
+/* CLICK OUTSIDE */
+document.addEventListener("click", () => {
+  suggestionsEl.style.display = "none";
+  searchInput.blur();
+});
+
+document.querySelector("header").addEventListener("click", e => {
+  e.stopPropagation();
+});
 </script>
 
 </body>
