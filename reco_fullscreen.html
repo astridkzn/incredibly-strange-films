@@ -56,12 +56,11 @@ header {
   position: fixed;
   top: calc(20px + var(--safe-top));
   left: 40px;
-  width: 280px;
   z-index: 20;
 }
 
 .search-wrapper {
-  position: relative;
+  width: 280px;
 }
 
 #search {
@@ -79,10 +78,6 @@ header {
 #search:not(:placeholder-shown) {
   background: white;
   color: black;
-}
-
-#search::placeholder {
-  color: rgba(255,255,255,0.7);
 }
 
 /* DROPDOWN */
@@ -130,24 +125,15 @@ header {
   margin: 0 0 10px;
 }
 
-.read-more {
-  background: none;
-  border: none;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0;
-}
-
 /* ACTIONS */
 .actions {
   position: fixed;
   bottom: calc(40px + var(--safe-bottom));
-  left: 50%;
-  transform: translateX(-50%);
+  right: 40px;
   display: flex;
   gap: 12px;
   align-items: center;
+  z-index: 10;
 }
 
 .actions button {
@@ -161,29 +147,37 @@ header {
   cursor: pointer;
 }
 
-.actions button:last-child {
+/* RELANCER = blanc comme avant */
+#reroll {
   background: white;
   color: black;
+  border-color: white;
 }
 
-/* BUBBLE */
+/* REROLL WRAPPER + BUBBLE */
+.reroll-wrapper {
+  position: relative;
+}
+
 .bubble {
   position: absolute;
   bottom: 64px;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
   background: white;
   color: black;
   padding: 8px 14px;
   border-radius: 999px;
   font-weight: 600;
   opacity: 0;
-  transform: translateY(6px);
   transition: opacity 0.2s ease, transform 0.2s ease;
   pointer-events: none;
+  white-space: nowrap;
 }
 
 .bubble.show {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);
 }
 
 /* MOBILE */
@@ -191,15 +185,20 @@ header {
   header {
     left: 0;
     right: 0;
-    width: 100%;
     display: flex;
     justify-content: center;
-    padding: 0 20px;
   }
 
   .search-wrapper {
     width: 100%;
     max-width: 320px;
+    padding: 0 20px;
+  }
+
+  .actions {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
   }
 
   .info {
@@ -219,7 +218,7 @@ header {
 
 <header>
   <div class="search-wrapper">
-    <input id="search" type="text" placeholder="Rechercher un film…" />
+    <input id="search" placeholder="Rechercher un film…" />
     <ul id="suggestions"></ul>
   </div>
 </header>
@@ -228,13 +227,15 @@ header {
   <h2 id="title"></h2>
   <p id="meta"></p>
   <p id="desc"></p>
-  <button id="readMore" class="read-more" style="display:none;">Lire plus</button>
 </div>
 
 <div class="actions">
   <button id="moreInfo" style="display:none;">+ d’infos</button>
-  <button id="reroll">Relancer</button>
-  <div class="bubble" id="bubble"></div>
+
+  <div class="reroll-wrapper">
+    <button id="reroll">Relancer</button>
+    <div class="bubble" id="bubble"></div>
+  </div>
 </div>
 
 <script>
@@ -242,135 +243,7 @@ const GITHUB_PREFIX = "https://raw.githubusercontent.com/astridkzn/incredibly-st
 const searchInput = document.getElementById("search");
 const suggestionsEl = document.getElementById("suggestions");
 const headerEl = document.querySelector("header");
-const infoEl = document.getElementById("info");
 const titleEl = document.getElementById("title");
 const metaEl = document.getElementById("meta");
 const descEl = document.getElementById("desc");
-const readMoreBtn = document.getElementById("readMore");
-const moreInfoBtn = document.getElementById("moreInfo");
-const rerollBtn = document.getElementById("reroll");
-const bubble = document.getElementById("bubble");
-
-let movies = [];
-let currentMovie = null;
-let isExpanded = false;
-let rerollCount = 0;
-
-const MAX_LENGTH = 300;
-
-const messages = [
-  { text: "Eh", duration: 1000 },
-  { text: "Eh !", duration: 1500 },
-  { text: "C'est bon non ?", duration: 1500 },
-  { text: "Décide-toi non ?", duration: 2000 },
-  { text: "OHHHHHHHH", duration: 1000 },
-  { text: "C'EST PAS INFINI", duration: 2000 }
-];
-
-function showBubble(msg) {
-  bubble.textContent = msg.text;
-  bubble.classList.add("show");
-  setTimeout(() => bubble.classList.remove("show"), msg.duration);
-}
-
-/* SEARCH */
-searchInput.addEventListener("input", () => {
-  const query = searchInput.value.toLowerCase();
-  suggestionsEl.innerHTML = "";
-
-  if (!query) {
-    suggestionsEl.style.display = "none";
-    return;
-  }
-
-  movies.filter(m => m.title.toLowerCase().includes(query))
-    .forEach(m => {
-      const li = document.createElement("li");
-      li.textContent = m.title;
-      li.onclick = () => {
-        displayMovie(m);
-        suggestionsEl.style.display = "none";
-        searchInput.blur();
-      };
-      suggestionsEl.appendChild(li);
-    });
-
-  suggestionsEl.style.display = suggestionsEl.children.length ? "block" : "none";
-});
-
-/* CLICK OUTSIDE SEARCH */
-document.addEventListener("click", (e) => {
-  if (!headerEl.contains(e.target)) {
-    suggestionsEl.style.display = "none";
-    searchInput.blur();
-  }
-});
-
-headerEl.addEventListener("click", e => e.stopPropagation());
-
-/* MOVIES */
-fetch("https://opensheet.elk.sh/19MCPj6cMFNGhO_Q0Cj8DxnJ9YMevFzrKLOXssBl6JW4/base")
-  .then(res => res.json())
-  .then(data => {
-    movies = data;
-    displayMovie(movies[Math.floor(Math.random() * movies.length)]);
-  });
-
-function displayMovie(movie) {
-  infoEl.classList.add("fade-out");
-
-  setTimeout(() => {
-    currentMovie = movie;
-    isExpanded = false;
-
-    titleEl.textContent = movie.title;
-    metaEl.innerHTML = `<strong>${movie.director}</strong> · <strong>${movie.year}</strong> · ${movie.genre}`;
-    updateDescription();
-
-    if (movie.background_file) {
-      document.body.style.backgroundImage = `url(${GITHUB_PREFIX + movie.background_file})`;
-    }
-
-    if (movie.URL) {
-      moreInfoBtn.style.display = "inline-block";
-      moreInfoBtn.onclick = () => window.open(movie.URL, "_blank");
-    } else {
-      moreInfoBtn.style.display = "none";
-    }
-
-    infoEl.classList.remove("fade-out");
-  }, 400);
-}
-
-function updateDescription() {
-  const text = currentMovie.description || "";
-  if (text.length > MAX_LENGTH && !isExpanded) {
-    descEl.textContent = text.slice(0, MAX_LENGTH) + "…";
-    readMoreBtn.style.display = "inline-block";
-    readMoreBtn.textContent = "Lire plus";
-  } else {
-    descEl.textContent = text;
-    readMoreBtn.style.display = text.length > MAX_LENGTH ? "inline-block" : "none";
-    readMoreBtn.textContent = "Lire moins";
-  }
-}
-
-readMoreBtn.onclick = () => {
-  isExpanded = !isExpanded;
-  updateDescription();
-};
-
-/* REROLL */
-rerollBtn.onclick = () => {
-  rerollCount++;
-
-  if (rerollCount % 5 === 0 && rerollCount / 5 <= messages.length) {
-    showBubble(messages[rerollCount / 5 - 1]);
-  }
-
-  displayMovie(movies[Math.floor(Math.random() * movies.length)]);
-};
-</script>
-
-</body>
-</html>
+const inf
