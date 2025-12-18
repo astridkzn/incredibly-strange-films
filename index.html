@@ -5,7 +5,7 @@
 <title>Incredibly Strange Films</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Google Fonts -->
+<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Barrio&display=swap" rel="stylesheet">
 
 <style>
@@ -18,7 +18,6 @@ html, body {
   cursor: url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/open.png') 16 16, auto;
 }
 
-/* LAYOUT */
 .homepage {
   display: flex;
   height: 100vh;
@@ -45,54 +44,53 @@ html, body {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding: 40px;
-  text-align: right;
+  padding-right: 6vw; /* empêche la coupe à droite */
+  box-sizing: border-box;
 }
 
+/* BLOC TITRE */
 .title {
-  line-height: 0.82;
+  text-align: right;
+  line-height: 0.78; /* interlignage très serré */
+  position: relative;
 }
 
-/* INCREDIBLY & FILMS */
-.title .incredibly,
-.title .films {
+/* TEXTE BLANC */
+.incredibly,
+.films {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  font-size: 11vw;
+  font-size: 10.5vw;
   color: #fff;
   display: block;
 }
 
 /* STRANGE */
-.title .strange {
+.strange {
   font-family: 'Barrio', cursive;
-  font-size: 9vw;
+  font-size: 8.5vw;
   color: #39ff14;
   display: block;
   text-align: center;
-  margin: -0.5vw 0 -0.8vw 0;
-  animation: strangeFloat 6s ease-in-out infinite,
-             strangeGlow 2.5s alternate infinite;
+
+  /* placement AU-DESSUS */
+  position: relative;
+  top: -1.2vw;
+
+  /* glow néon */
+  text-shadow:
+    0 0 6px rgba(57,255,20,0.6),
+    0 0 14px rgba(57,255,20,0.4);
+
+  /* micro-mouvement */
+  animation: floatStrange 5s ease-in-out infinite;
 }
 
-/* MICRO-MOUVEMENTS */
-@keyframes strangeFloat {
-  0%   { transform: translateY(0); }
-  50%  { transform: translateY(-6px); }
+/* ANIMATION */
+@keyframes floatStrange {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
   100% { transform: translateY(0); }
-}
-
-@keyframes strangeGlow {
-  from {
-    text-shadow:
-      0 0 6px rgba(57,255,20,0.4),
-      0 0 12px rgba(57,255,20,0.3);
-  }
-  to {
-    text-shadow:
-      0 0 10px rgba(57,255,20,0.8),
-      0 0 24px rgba(57,255,20,0.6);
-  }
 }
 
 /* RESPONSIVE */
@@ -109,21 +107,22 @@ html, body {
 
   .text-container {
     justify-content: center;
-    text-align: center;
+    padding-right: 0;
   }
 
   .title {
-    line-height: 0.9;
+    text-align: center;
+    line-height: 0.85;
   }
 
-  .title .incredibly,
-  .title .films {
+  .incredibly,
+  .films {
     font-size: 14vw;
   }
 
-  .title .strange {
+  .strange {
     font-size: 12vw;
-    margin: -1vw 0 -1.5vw 0;
+    top: -2vw;
   }
 }
 </style>
@@ -133,15 +132,12 @@ html, body {
 
 <div class="homepage">
 
-  <!-- VIDEO -->
   <div class="video-container">
     <video autoplay muted loop playsinline>
       <source src="https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/videos/homepage_bg.mov" type="video/mp4">
-      Votre navigateur ne supporte pas la vidéo.
     </video>
   </div>
 
-  <!-- TITRE -->
   <div class="text-container">
     <div class="title">
       <span class="incredibly">INCREDIBLY</span>
@@ -156,23 +152,6 @@ html, body {
 function goToGenerator() {
   window.location.href = "reco_fullscreen.html";
 }
-
-/* CURSEUR */
-const OPEN_CURSOR =
-"url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/open.png') 16 16, auto";
-
-const CLOSE_CURSOR =
-"url('https://raw.githubusercontent.com/astridkzn/incredibly-strange-films/main/images/close.png') 16 16, auto";
-
-document.body.style.cursor = OPEN_CURSOR;
-
-document.addEventListener("mousedown", () => {
-  document.body.style.cursor = CLOSE_CURSOR;
-});
-
-document.addEventListener("mouseup", () => {
-  document.body.style.cursor = OPEN_CURSOR;
-});
 </script>
 
 </body>
